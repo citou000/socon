@@ -11,12 +11,12 @@ const dashboardOption = ref({
 </script>
 
 <template>
-  <main class="w-full h-screen bg-purple-100">
-    <div class="h-[40%] bg-purple-200 text-purple-900 flex">
+  <main class="w-full h-full">
+    <div class="h-[40%] bg-purple-100 text-purple-900 flex">
       <div class="w-full flex items-center justify-around h-full px-8">
-        <div v-for="(k, v) in dashboardOption" :key="dashboardItem" class="flex flex-col items-start justify-around w-fit cursor-pointer bg-white p-8">
-        <span class="self-start text-md">{{ v }}</span>
-        <span class="text-9xl">{{ k }}</span>
+        <div v-for="(v,k) in dashboardOption" :key="k" class="flex flex-col items-start justify-around w-fit cursor-pointer p-8">
+        <span class="self-start text-md font-mono font-bold">{{ k }}</span>
+        <span class="text-9xl">{{ v }}</span>
       </div>
       </div>
     </div>
