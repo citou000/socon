@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+// import { RouterLink } from 'vue-router'
 </script>
 <template>
   <div class="w-full py-6 bg-purple-200 flex items-center justify-between px-8">
