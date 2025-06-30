@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "bun-http": "^0.0.1",
     "drizzle-orm": "^0.44.2"
   }
 }
