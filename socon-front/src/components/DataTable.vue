@@ -4,16 +4,23 @@
     <table class="w-full text-sm px-2">
       <thead class="rounded-t-lg px-2">
         <tr>
-          <th v-for="(header, index) in headers" :key="header"
+          <th
+            v-for="(header, index) in props.headers"
+            :key="header"
             class="p-2 text-left font-semibold hover:bg-gray-200 cursor-pointer text-xl border-b-2 border-gray-300"
-            @click="handleColumnClick(index)">
+            @click="handleColumnClick(index)"
+          >
             {{ header }}
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="member in data" :key="member.id" class="hover:bg-gray-100 cursor-pointer border-b-2 border-gray-300"
-          @click="selectMemberAndEmit(member)">
+        <tr
+          v-for="member in props.data"
+          :key="member.id"
+          class="hover:bg-gray-100 cursor-pointer border-b-2 border-gray-300 justify-items-center"
+          @click="selectMemberAndEmit(member)"
+        >
           <td class="p-3 font-semibold text-md">
             {{ member.name }}
           </td>
@@ -24,18 +31,27 @@
             {{ member.mentor }}
           </td>
           <td class="p-3 text-center">
-            <span :class="[
-              'border',
-              'py-1',
-              'px-2',
-              'rounded-full',
-              member.baptismStatus ? 'border-green-500 text-green-500 bg-green-400/10' : 'border-red-500 text-red-500 bg-red-400/10'
-            ]">
+            <span
+              :class="[
+                'border',
+                'py-1',
+                'px-2',
+                'rounded-full',
+                member.baptismStatus
+                  ? 'border-green-500 text-green-500 bg-green-400/10'
+                  : 'border-red-500 text-red-500 bg-red-400/10',
+              ]"
+            >
               {{ member.baptismStatus ? 'Oui' : 'Non' }}
             </span>
           </td>
           <td class="p-3">
-            {{ member.details }}
+            <div :key="index">
+              {{
+                Object.entries(member.details)[Object.entries(member.details).length - 1][1] ||
+                'Aucun rapport pour la 1ère semaine'
+              }}
+            </div>
           </td>
         </tr>
       </tbody>
@@ -44,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue';
+import { ref, onUnmounted } from 'vue'
 
 // Props: Expect an array of data objects and headers
 const props = defineProps({
@@ -57,42 +73,45 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-});
+})
 
-// Map headers to data keys (adjust based on your data structure)
-const headerKeys = ['name', 'formation', 'mentor', 'baptismStatus', 'details'];
-
-// State for selected member
-const selectedMember = ref(null);
+// State for selected member and accordion
+const selectedMember = ref(null)
 
 // Emits: Notify parent of column click with selected member and column index
-const emit = defineEmits(['column-click']);
+const emit = defineEmits(['column-click'])
+
+// Toggle accordion visibility
+// const toggleAccordion = (week, event) => {
+//   isOpen.value[week] = !isOpen.value[week]
+//   event.stopPropagation() // Prevent row click from triggering
+// }
 
 // Select a member and emit the event
 const selectMemberAndEmit = (member) => {
-  selectedMember.value = member;
-  emit('column-click', { member: selectedMember.value, columnIndex: null }); // Null columnIndex since it's a row click
-};
+  selectedMember.value = member
+  emit('column-click', { member: selectedMember.value, columnIndex: null })
+}
 
 // Handle column header click
 const handleColumnClick = (columnIndex) => {
   if (!selectedMember.value) {
-    alert('Veuillez sélectionner un membre en cliquant sur une ligne.');
-    return;
+    alert('Veuillez sélectionner un membre en cliquant sur une ligne.')
+    return
   }
-  emit('column-click', { member: selectedMember.value, columnIndex });
-};
+  emit('column-click', { member: selectedMember.value, columnIndex })
+}
 
 // Clear selection on Escape key
 const handleEsc = (e) => {
   if (e.key === 'Escape') {
-    selectedMember.value = null;
+    selectedMember.value = null
   }
-};
-window.addEventListener('keydown', handleEsc);
+}
+window.addEventListener('keydown', handleEsc)
 
 // Cleanup event listener
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleEsc);
-});
+  window.removeEventListener('keydown', handleEsc)
+})
 </script>
