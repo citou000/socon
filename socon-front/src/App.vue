@@ -4,13 +4,17 @@ import DataTable from '@/components/DataTable.vue'
 import Sidebar from '@/components/SideBar.vue'
 import ReportInput from '@/components/ReportInput.vue'
 import MemberEdit from '@/components/MemberEdit.vue'
+import { MoveLeft } from 'lucide-vue-next'
+import { MoveRight } from 'lucide-vue-next'
 
 // Dashboard statistics
-const dashboardOptions = ref({
-  Baptisés: 50,
-  Âmes: 100,
-  Suivis: 50,
-})
+// const dashboardOptions = ref({
+//   Baptisés: 50,
+//   Âmes: 100,
+//   Suivis: 50,
+// })
+
+const currentIndex = ref(0)
 
 // Member data with weekly details
 const members = ref([
@@ -108,6 +112,26 @@ const members = ref([
   },
 ])
 
+const stats = (list) => {
+  let baptized = 0
+  let suivi = 0
+
+  list.forEach((soul) => {
+    if (soul.baptismStatus) baptized++
+    if (soul.details && Object.keys(soul.details).length > 0) suivi++
+  })
+
+  return {
+    Baptisés: Math.round((baptized / list.length) * 100),
+    Âmes: list.length,
+    Suivis: Math.round((suivi / list.length) * 100),
+  }
+}
+
+import { computed } from 'vue'
+
+const dashboardOptions = computed(() => stats(members.value))
+
 const headers = ref(['Noms', 'Formations', 'Mentor', 'Baptisés', 'Details'])
 
 // State for sidebar
@@ -152,51 +176,100 @@ const handleMemberSaving = (updatedMember) => {
   )
   console.table(members.value)
 }
+
+const move = (direction) => {
+  if (direction === 'left') {
+    if (currentIndex.value > 0) currentIndex.value--
+  } else if (direction === 'right') {
+    if (currentIndex.value < Object.keys(dashboardOptions.value).length - 1) currentIndex.value++
+  }
+}
 </script>
 
-<!-- <template>
-  <main class="w-full h-screen bg-purple-50">
-    <div class="bg-purple-200 text-purple-900 w-full py-7">
-      <div class="md:w-full md:grid-cols-3 md:mx-auto md:items-center grid grid-cols-1 h-full px-8 bg-amber-300 gap-4">
-        <div v-for="(value, key) in dashboardOptions" :key="key"
-          class="md:w-fit w-full bg-amber-100 gap-3 flex flex-col items-start justify-around cursor-pointer p-8 hover:bg-purple-200 transition-all duration-300 ease-in-out my-2">
-          <span class="self-start text-xl font-mono font-semibold">{{ key }}</span>
-          <span class="text-8xl font-semibold">{{ value }}<span v-if="key !== 'Âmes'">%</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="p-4 max-w-7xl mx-auto mt-8 w-full">
-      <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
-    </div>
-
-    <Sidebar v-if="isSidebarOpen" :member="selectedMember" @close="isSidebarOpen = false" @addReport="handleReporting"
-      @editMember="handleMemberEditing" />
-    <ReportInput v-if="isReporting" @close="isReporting = false" @reportSubmission="handleSubmission" />
-    <MemberEdit v-if="isEditing" :member="selectedMember" @close="isEditing = false" @save="handleMemberSaving" />
-  </main>
-</template> -->
 <template>
   <main class="min-h-screen bg-purple-50">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-amber-300 py-4">
-          <div v-for="(value, key) in dashboardOptions" :key="key"
-            class="w-full bg-amber-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 hover:bg-purple-200 transition-all duration-300 ease-in-out">
-            <span class="self-start text-lg sm:text-xl font-mono font-semibold text-purple-800">{{ key }}</span>
-            <span class="text-6xl sm:text-7xl lg:text-8xl font-semibold text-purple-900 mt-2">{{ value }}<span v-if="key !== 'Âmes'">%</span></span>
+      <div class="max-w-7xl mx-auto relative flex flex-col items-center">
+        <div class="overflow-hidden w-full">
+          <div
+            class="flex transition-transform duration-300 ease-in-out"
+            :style="{
+              transform: `translateX(-${currentIndex * 100}%)`,
+            }"
+          >
+            <div
+              v-for="(value, key) in dashboardOptions"
+              :key="key"
+              class="w-full flex-shrink-0 p-4"
+            >
+              <div
+                class="bg-purple-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 transition-all duration-300 ease-in-out rounded-2xl h-full"
+              >
+                <span class="self-start text-lg sm:text-xl font-mono font-semibold text-purple-800">
+                  {{ key }}
+                </span>
+                <span class="text-6xl sm:text-7xl lg:text-8xl font-semibold text-purple-900 mt-2">
+                  {{ value }}<span v-if="key !== 'Âmes'">%</span>
+                </span>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- Buttons -->
+        <div
+          class="absolute inset-y-1/2 -translate-y-1/2 w-full px-4 flex justify-between items-center"
+        >
+          <button
+            class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
+            @click="move('left')"
+          >
+            <MoveLeft />
+          </button>
+          <button
+            class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
+            @click="move('right')"
+          >
+            <MoveRight />
+          </button>
+        </div>
+
+        <!-- Indicator Dots -->
+        <div class="flex justify-center mt-6 gap-2">
+          <span
+            v-for="(value, index) in Object.keys(dashboardOptions)"
+            :key="index"
+            class="w-3 h-3 rounded-full transition-all duration-300"
+            :class="{
+              'bg-purple-700 scale-110': index === currentIndex,
+              'bg-purple-300': index !== currentIndex,
+            }"
+          ></span>
         </div>
       </div>
     </div>
 
-    <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto mt-8 w-full">
+    <div class="px-4 md:p-8 max-w-7xl mx-auto mt-8 w-full overflow-scroll">
       <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
     </div>
 
-    <Sidebar v-if="isSidebarOpen" :member="selectedMember" @close="isSidebarOpen = false" @addReport="handleReporting"
-      @editMember="handleMemberEditing" />
-    <ReportInput v-if="isReporting" @close="isReporting = false" @reportSubmission="handleSubmission" />
-    <MemberEdit v-if="isEditing" :member="selectedMember" @close="isEditing = false" @save="handleMemberSaving" />
+    <Sidebar
+      v-if="isSidebarOpen"
+      :member="selectedMember"
+      @close="isSidebarOpen = false"
+      @addReport="handleReporting"
+      @editMember="handleMemberEditing"
+    />
+    <ReportInput
+      v-if="isReporting"
+      @close="isReporting = false"
+      @reportSubmission="handleSubmission"
+    />
+    <MemberEdit
+      v-if="isEditing"
+      :member="selectedMember"
+      @close="isEditing = false"
+      @save="handleMemberSaving"
+    />
   </main>
 </template>

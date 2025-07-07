@@ -29,8 +29,8 @@ const close = () => {
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-center items-center z-40">
-    <div class="w-[30%] mx-auto bg-white py-8 px-6 rounded-lg flex flex-col gap-4">
+  <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-center items-center z-40 p-5">
+    <div class="md:w-[40%] bg-white rounded-lg p-6 shadow-xl relative flex flex-col gap-4">
       <X
         class="size-6 cursor-pointer hover:text-red-500 font-bold transition-colors duration-100"
         @click="$emit('close')"

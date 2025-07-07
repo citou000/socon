@@ -48,8 +48,8 @@ const close = () => {
 
 <template>
   <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-center items-center z-50">
-    <div class="w-[40%] bg-white rounded-lg p-6 shadow-xl relative flex flex-col gap-4">
-      <X class="size-6 absolute top-4 right-4 cursor-pointer hover:text-red-500" @click="close" />
+    <div class="md:w-[40%] bg-white rounded-lg p-6 shadow-xl relative flex flex-col gap-4">
+      <X class="size-6 top-4 right-4 cursor-pointer hover:text-red-500" @click="close" />
 
       <h2 class="text-3xl font-bold text-purple-900 mb-2">Modifier le membre</h2>
 
