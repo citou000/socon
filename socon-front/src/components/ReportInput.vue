@@ -4,6 +4,28 @@ import BaseButton from '@/components/BaseButton.vue'
 import { ref } from 'vue'
 
 const report = ref('')
+
+const emit = defineEmits(['close', 'reportSubmission'])
+
+const handleSubmission = () => {
+  console.log('[SUBMIT]', report.value)
+
+  if (report.value.trim() === '') {
+    alert('Le rapport ne peut pas être vide.')
+    return
+  }
+  emit('reportSubmission', report.value)
+  report.value = '' // Clear the input after submission
+}
+
+if (import.meta.env.VITE_APP_ENV === 'development') {
+  console.log('ReportInput component loaded')
+}
+
+const close = () => {
+  console.log('Closing ReportInput')
+  emit('close')
+}
 </script>
 
 <template>
@@ -28,10 +50,14 @@ const report = ref('')
         ></textarea>
       </div>
       <div class="flex justify-end gap-4 mt-4">
-        <BaseButton :bg="'bg-purple-600'" :hoverBg="'bg-purple-700'" :color="'text-white'"
+        <BaseButton
+          :bg="'bg-purple-600'"
+          :hoverBg="'bg-purple-700'"
+          :color="'text-white'"
+          @click="handleSubmission"
           >Soumettre</BaseButton
         >
-        <BaseButton>Soumettre</BaseButton>
+        <BaseButton @click="close">Annuler</BaseButton>
       </div>
     </div>
   </div>

@@ -1,9 +1,13 @@
-<script setup>
-
-</script>
-
+<!-- Accordion.vue -->
 <template>
-  <div class="w-full">
+  <div>
     <slot />
   </div>
 </template>
+
+<script setup>
+import { provide, ref } from 'vue'
+
+const openItem = ref(null)
+provide('openItem', openItem)
+</script>

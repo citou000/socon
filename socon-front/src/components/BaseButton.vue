@@ -32,7 +32,6 @@ const props = defineProps({
       'font-bold',
       'cursor-pointer',
     ]"
-    @click="$emit('click')"
   >
     <slot name="icon"></slot>
     <slot></slot>

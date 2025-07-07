@@ -1,14 +1,42 @@
+<script setup>
+//SideBar.vue
+import Accordion from '@/components/Accordion.vue'
+import AccordionItem from '@/components/AccordionItem.vue'
+import { X } from 'lucide-vue-next'
+
+const emit = defineEmits(['close', 'addReport', 'editMember'])
+
+const props = defineProps({
+  member: {
+    type: Object,
+    default: null,
+  },
+})
+
+const close = () => {
+  console.log('Closing the Sidebar')
+  emit('close')
+}
+
+const addReport = () => {
+  console.log('Adding a report')
+  emit('addReport')
+}
+
+const editMember = () => {
+  emit('editMember', props.member.name)
+  // Logic to edit the member can be added here
+}
+</script>
+
 <template>
   <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end">
     <div
       class="bg-white w-1/3 h-full p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col"
     >
       <div class="flex justify-between items-center mb-4">
-        <button
-          @click="$emit('close')"
-          class="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer"
-        >
-          ×
+        <button @click="close" class="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer">
+          <X />
         </button>
       </div>
 
@@ -51,7 +79,7 @@
           </AccordionItem>
         </Accordion>
 
-        <button class="py-2 w-full text-gray-500 font-bold cursor-pointer" @click="$emit('add-report')">
+        <button class="py-2 w-full text-gray-500 font-bold cursor-pointer" @click="addReport">
           <span>+</span>
           Ajouter un rapport
         </button>
@@ -60,6 +88,7 @@
       <div class="flex justify-end h-full items-end">
         <button
           class="px-4 py-2 bg-purple-900 rounded-md font-bold text-white cursor-pointer hover:bg-purple-700 transition-all"
+          @click="editMember"
         >
           Modifier
         </button>
@@ -67,15 +96,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import Accordion from '@/components/Accordion.vue'
-import AccordionItem from '@/components/AccordionItem.vue'
-
-const props = defineProps({
-  member: {
-    type: Object,
-    default: null,
-  },
-})
-</script>

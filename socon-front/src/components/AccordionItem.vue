@@ -19,18 +19,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+// src/components/AccordionItem.vue
+import { inject, computed } from 'vue'
 
 const props = defineProps({
   title: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
-const isOpen = ref(false)
+// Shared state from Accordion.vue
+const openItem = inject('openItem', null)
+
+const isOpen = computed(() => openItem?.value === props.title)
+
 function toggle() {
-  isOpen.value = !isOpen.value
+  if (openItem) {
+    openItem.value = isOpen.value ? null : props.title
+  }
 }
 </script>
 
