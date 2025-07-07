@@ -28,9 +28,11 @@ const props = defineProps({
       'duration-300',
       'flex',
       'items-center',
+      'justify-center',
       'gap-2',
       'font-bold',
       'cursor-pointer',
+      'w-full'
     ]"
   >
     <slot name="icon"></slot>
