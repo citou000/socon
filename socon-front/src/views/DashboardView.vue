@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import DataTable from '@/components/DataTable.vue'
 import Sidebar from '@/components/SideBar.vue'
 import ReportInput from '@/components/ReportInput.vue'
@@ -7,18 +7,15 @@ import MemberEdit from '@/components/MemberEdit.vue'
 import { MoveLeft } from 'lucide-vue-next'
 import { MoveRight } from 'lucide-vue-next'
 
-// Dashboard statistics
-// const dashboardOptions = ref({
-//   Baptisés: 50,
-//   Âmes: 100,
-//   Suivis: 50,
-// })
-
 let intervalId
 
 const currentIndex = ref(0)
+const screenWidth = ref(window.innerWidth)
 
-// Member data with weekly details
+const handleResize = () => {
+  screenWidth.value = window.innerWidth
+}
+
 const members = ref([
   {
     name: 'John Doe',
@@ -130,81 +127,87 @@ const stats = (list) => {
   }
 }
 
-import { computed } from 'vue'
-
 const dashboardOptions = computed(() => stats(members.value))
-
 const headers = ref(['Noms', 'Formations', 'Mentor', 'Baptisés', 'Details'])
 
-// State for sidebar
 const isSidebarOpen = ref(false)
 const selectedMember = ref(null)
 const isReporting = ref(false)
 const isEditing = ref(false)
-// Handle column click from DataTable
+
 const handleColumnClick = ({ member }) => {
   selectedMember.value = member
   isSidebarOpen.value = true
 }
+
 const handleReporting = () => {
   isReporting.value = true
 }
 
 const handleSubmission = (report) => {
-  console.log('[SUBMIT]', report)
-
   if (!report || !selectedMember.value) {
     alert('Veuillez entrer un rapport valide.')
     return
   }
-
   const week = `Semaine ${Object.keys(selectedMember.value.details).length + 1}`
   selectedMember.value.details[week] = report
   isReporting.value = false
 }
 
-const handleMemberEditing = (name) => {
-  console.log('Editing member:', name)
-  // Logic for editing the member can be added here
+const handleMemberEditing = () => {
   isEditing.value = true
 }
 
 const handleMemberSaving = (updatedMember) => {
   selectedMember.value = updatedMember
   isEditing.value = false
-  console.log('Member updated:', updatedMember)
   members.value = members.value.map((member) =>
     member.name === updatedMember.name ? updatedMember : member,
   )
-  console.table(members.value)
 }
 
 const move = (direction) => {
   if (direction === 'left') {
-    if (currentIndex.value > 0) currentIndex.value--
-    else if (direction === 'left' && currentIndex.value === 0) {
-      currentIndex.value = Object.keys(dashboardOptions.value).length - 1
-    }
-  } else if (direction === 'right') {
-    if (currentIndex.value < Object.keys(dashboardOptions.value).length - 1) {
-      currentIndex.value++
-    } else if (
-      direction === 'right' &&
-      currentIndex.value === Object.keys(dashboardOptions.value).length - 1
-    ) {
-      currentIndex.value = 0
-    }
+    currentIndex.value =
+      currentIndex.value > 0
+        ? currentIndex.value - 1
+        : Object.keys(dashboardOptions.value).length - 1
+  } else {
+    currentIndex.value =
+      currentIndex.value < Object.keys(dashboardOptions.value).length - 1
+        ? currentIndex.value + 1
+        : 0
   }
 }
 
+function startAutoSlide() {
+  clearInterval(intervalId)
+  intervalId = setInterval(() => move('right'), 5000)
+}
+
+function stopAutoSlide() {
+  currentIndex.value = 0
+  clearInterval(intervalId)
+}
+
 onMounted(() => {
-  intervalId = setInterval(() => {
-    move('right')
-  }, 4000)
+  window.addEventListener('resize', handleResize)
+  if (screenWidth.value < 768) {
+    startAutoSlide()
+  }
 })
 
 onBeforeUnmount(() => {
-  clearInterval(intervalId)
+  stopAutoSlide()
+  window.removeEventListener('resize', handleResize)
+})
+
+watch(screenWidth, (newWidth, oldWidth) => {
+  if (newWidth < 768 && oldWidth >= 768) {
+    startAutoSlide()
+  } else if (newWidth >= 768 && oldWidth < 768) {
+    stopAutoSlide()
+  }
 })
 </script>
 
@@ -222,7 +225,7 @@ onBeforeUnmount(() => {
             <div
               v-for="(value, key) in dashboardOptions"
               :key="key"
-              class="w-full flex-shrink-0 p-4"
+              class="w-full shrink-0 md:shrink p-4"
             >
               <div
                 class="bg-purple-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 transition-all duration-300 ease-in-out rounded-2xl h-full"
@@ -238,9 +241,8 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <!-- Buttons -->
         <div
-          class="absolute inset-y-1/2 -translate-y-1/2 w-full px-4 flex justify-between items-center"
+          class="absolute inset-y-1/2 -translate-y-1/2 w-full px-4 flex justify-between items-center md:hidden"
         >
           <button
             class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
@@ -256,12 +258,11 @@ onBeforeUnmount(() => {
           </button>
         </div>
 
-        <!-- Indicator Dots -->
         <div class="flex justify-center mt-6 gap-2">
           <span
             v-for="(value, index) in Object.keys(dashboardOptions)"
             :key="index"
-            class="w-3 h-3 rounded-full transition-all duration-300"
+            class="w-3 h-3 rounded-full transition-all duration-300 md:hidden"
             :class="{
               'bg-purple-700 scale-110': index === currentIndex,
               'bg-purple-300': index !== currentIndex,

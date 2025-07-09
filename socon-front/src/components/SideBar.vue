@@ -1,6 +1,6 @@
 <script setup>
 //SideBar.vue
-import Accordion from '@/components/Accordion.vue'
+import Accordion from '@/components/AccordionWrapper.vue'
 import AccordionItem from '@/components/AccordionItem.vue'
 import { X } from 'lucide-vue-next'
 
@@ -24,7 +24,7 @@ const addReport = () => {
 }
 
 const editMember = () => {
-  emit('editMember', props.member.name)
+  emit('editMember')
   // Logic to edit the member can be added here
 }
 </script>
