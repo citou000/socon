@@ -77,13 +77,12 @@ const handleColumnClick = (columnIndex) => {
           <td class="p-3 text-center">
             <span
               :class="[
-                'border',
                 'py-1',
                 'px-2',
-                'rounded-full',
+                'rounded-sm',
                 member.baptismStatus
-                  ? 'border-green-500 text-green-500 bg-green-400/10'
-                  : 'border-red-500 text-red-500 bg-red-400/10',
+                  ? 'text-green-500 bg-green-400/20'
+                  : 'text-red-500 bg-red-400/20',
               ]"
             >
               {{ member.baptismStatus ? 'Oui' : 'Non' }}

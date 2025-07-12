@@ -6,6 +6,7 @@ import ReportInput from '@/components/ReportInput.vue'
 import MemberEdit from '@/components/MemberEdit.vue'
 import { MoveLeft } from 'lucide-vue-next'
 import { MoveRight } from 'lucide-vue-next'
+import FilterWrapper from '@/components/FilterWrapper.vue'
 
 let intervalId
 
@@ -112,23 +113,23 @@ const members = ref([
 ])
 
 const stats = (list) => {
-  let baptized = 0
-  let suivi = 0
+  let saved = 0
+  let mentored = 0
 
   list.forEach((soul) => {
-    if (soul.baptismStatus) baptized++
-    if (soul.details && Object.keys(soul.details).length > 0) suivi++
+    if (soul.baptismStatus) saved++
+    if (soul.details && Object.keys(soul.details).length > 0) mentored++
   })
 
   return {
-    Baptisés: Math.round((baptized / list.length) * 100),
+    'Ayant fait la prière du salut': Math.round((saved / list.length) * 100),
     Âmes: list.length,
-    Suivis: Math.round((suivi / list.length) * 100),
+    Suivi: Math.round((mentored / list.length) * 100),
   }
 }
 
 const dashboardOptions = computed(() => stats(members.value))
-const headers = ref(['Noms', 'Formations', 'Mentor', 'Baptisés', 'Details'])
+const headers = ref(['Noms', 'Formations', 'Mentor', 'Prière du salut', 'Details'])
 
 const isSidebarOpen = ref(false)
 const selectedMember = ref(null)
@@ -205,14 +206,14 @@ onBeforeUnmount(() => {
 watch(screenWidth, (newWidth, oldWidth) => {
   if (newWidth < 768 && oldWidth >= 768) {
     startAutoSlide()
-  } else if (newWidth >= 768 && oldWidth < 768) {
+  } else {
     stopAutoSlide()
   }
 })
 </script>
 
 <template>
-  <main class="min-h-screen bg-purple-50">
+  <main class="min-h-screen bg-purple-50 flex flex-col gap-4">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto relative flex flex-col items-center">
         <div class="overflow-hidden w-full">
@@ -271,6 +272,8 @@ watch(screenWidth, (newWidth, oldWidth) => {
         </div>
       </div>
     </div>
+
+    <FilterWrapper />
 
     <div class="px-4 md:p-8 max-w-7xl mx-auto mt-8 w-full overflow-scroll">
       <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />

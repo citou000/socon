@@ -51,16 +51,15 @@ const editMember = () => {
           <span class="font-semibold text-gray-600">Mentor:</span> {{ member.mentor }}
         </p>
         <p class="font-bold flex justify-between items-center">
-          <span class="font-semibold text-gray-600">Baptisé:</span>
+          <span class="font-semibold text-gray-600">Prière du salut:</span>
           <span
             :class="[
-              'border',
               'py-1',
               'px-4',
-              'rounded-full',
+              'rounded-sm',
               member.baptismStatus
-                ? 'border-green-500 text-green-500 bg-green-400/10'
-                : 'border-red-500 text-red-500 bg-red-400/10',
+                ? 'text-green-500 bg-green-400/10'
+                : 'text-red-500 bg-red-400/10',
             ]"
           >
             {{ member.baptismStatus ? 'Oui' : 'Non' }}
@@ -87,7 +86,7 @@ const editMember = () => {
 
       <div class="flex justify-end h-full items-end">
         <button
-          class="px-4 py-2 bg-purple-900 rounded-md font-bold text-white cursor-pointer hover:bg-purple-700 transition-all"
+          class="px-4 py-2 bg-purple-900 rounded-sm font-bold text-white cursor-pointer hover:bg-purple-700 transition-all"
           @click="editMember"
         >
           Modifier
