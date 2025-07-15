@@ -8,7 +8,7 @@ import { MoveLeft } from 'lucide-vue-next'
 import { MoveRight } from 'lucide-vue-next'
 import FilterWrapper from '@/components/FilterWrapper.vue'
 
-let intervalId
+let intervalId = null
 
 const currentIndex = ref(0)
 const screenWidth = ref(window.innerWidth)
@@ -270,7 +270,7 @@ const handleTab = (key) => {
       <FilterWrapper @tab-clicked="(key) => handleTab(key)" />
     </div>
 
-    <div class="px-4 md:px-8 max-w-7xl mx-auto w-full overflow-scroll">
+    <div class="px-4 md:p-8 max-w-7xl mx-auto mt-8 w-full overflow-scroll">
       <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
     </div>
 
