@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <footer class="w-full bg-purple-500 py-9 text-center text-white mt-8 flex items-center justify-center font-bold">
+  <footer class="w-full bg-purple-700 py-9 text-center text-white mt-8 flex items-center justify-center font-bold">
     © 2025 Socon CRM. Tous droits réservés.
   </footer>
 </template>

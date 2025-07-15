@@ -1,29 +1,53 @@
 <script setup>
-import { Search } from 'lucide-vue-next'
-import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
+// import { Search, ListFilter } from 'lucide-vue-next'
 // import BaseButton from '@/components/BaseButton.vue'
 
-const advancedFilter = ref(false)
+const tabs = ref('all')
 
-const more = () => {
-  advancedFilter.value = true
+const tabOptions = [
+  { label: 'Tous', key: 'all' },
+  { label: 'Par mentor', key: 'mentor' },
+  { label: 'Par salut', key: 'salvation' },
+]
+
+const emit = defineEmits(['tab-clicked'])
+
+function changeTab(key) {
+  tabs.value = key
+  emit('tab-clicked', key)
 }
 </script>
 
 <template>
-  <div class="mx-9 flex gap-4 items-center">
-    <div class="flex w-full gap-2">
-      <input
-        type="text"
-        name="search"
-        id="search"
-        class="rounded-sm outline-0 border border-purple-400 pl-4 w-full"
-      />
-      <span class="bg-purple-400 rounded-sm p-2 text-white hover:bg-purple-600 cursor-pointer"
-        ><Search
-      /></span>
+  <div class="flex justify-between px-12 max-w-7xl mx-auto w-full">
+    <!-- Tab Buttons -->
+    <div class="flex items-center gap-4">
+      <div
+        v-for="tab in tabOptions"
+        :key="tab.key"
+        :class="[
+          'text-purple-900',
+          'font-semibold',
+          'cursor-pointer',
+          'px-4',
+          'py-2',
+          tabs === tab.key ? 'border-b-2 border-purple-800' : '',
+        ]"
+        @click="changeTab(tab.key)"
+      >
+        {{ tab.label }}
+      </div>
     </div>
-    <RouterLink class="hover:underline hover:text-purple-700" @click="more">Plus</RouterLink>
+
+    <!-- Action Buttons -->
+    <!-- <div class="flex gap-2">
+      <BaseButton variant="no_border" :squared="true">
+        <ListFilter />
+      </BaseButton>
+      <BaseButton variant="no_border" :squared="true">
+        <Search />
+      </BaseButton>
+    </div> -->
   </div>
 </template>

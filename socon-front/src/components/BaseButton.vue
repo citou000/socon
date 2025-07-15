@@ -1,62 +1,63 @@
 <script setup>
 const props = defineProps({
-  bg: {
+  variant: {
     type: String,
-    default: 'bg-gray-100',
-  },
-  hoverBg: {
-    type: String,
-    default: 'hover:bg-gray-200',
-  },
-  border: {
-    type: String,
-    default: 'border border-gray-300',
-  },
-  rounded: {
-    type: String,
-    default: 'rounded-md',
-  },
-  color: {
-    type: String,
-    default: 'text-gray-700',
-  },
-  type: {
     required: true,
+  },
+  icon: {
     type: String,
-    // default: 'primary',
-    validator(value) {
-      return ['primary', 'secondary', 'tertiary'].includes(value)
-    },
+    default: '',
+  },
+  squared: {
+    type: Boolean,
+    default: false,
   },
 })
+
+const classes = {
+  primary: {
+    bg: 'bg-purple-600',
+    hover: 'hover:bg-purple-700',
+    text: 'text-white',
+  },
+  secondary: {
+    bg: 'bg-gray-200',
+    hover: 'hover:bg-gray-300',
+    text: 'text-gray-800',
+    border: 'border border-gray-300',
+  },
+  no_border: {
+    bg: 'bg-transparent',
+    hover: 'hover:bg-gray-300',
+    text: 'text-gray-800',
+    border: '',
+  },
+}
 </script>
 
 <template>
   <button
     :class="[
-      'px-4',
-      'py-1',
+      'px-2',
+      'py-2',
       'rounded-md',
-      props.bg,
-      props.hoverBg,
-      props.color,
-      props.border,
-      props.rounded,
-      'hover:bg-opacity-80',
-      'focus:outline-none',
+      'font-semibold',
+      'cursor-pointer',
       'transition-colors',
       'duration-300',
       'flex',
       'items-center',
       'justify-center',
       'gap-2',
-      'font-bold',
-      'cursor-pointer',
       'w-full',
+      classes[props.variant].bg,
+      classes[props.variant].hover,
+      classes[props.variant].text,
+      classes[props.variant].border,
     ]"
     @click="$emit('event')"
   >
-    <slot name="icon"></slot>
-    <slot></slot>
+    <slot name="icon" />
+    <slot />
   </button>
 </template>

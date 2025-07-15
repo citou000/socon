@@ -51,7 +51,7 @@ const handleColumnClick = (columnIndex) => {
           <th
             v-for="(header, index) in props.headers"
             :key="header"
-            class="p-2 text-left font-semibold hover:bg-gray-200 cursor-pointer text-xl border-b-2 border-gray-300"
+            class="p-2 text-left font-semibold cursor-default text-xl border-b-2 border-gray-300"
             @click="handleColumnClick(index)"
           >
             {{ header }}

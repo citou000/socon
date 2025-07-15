@@ -210,6 +210,11 @@ watch(screenWidth, (newWidth, oldWidth) => {
     stopAutoSlide()
   }
 })
+
+const handleTab = (key) => {
+  // Handle tab click logic here
+  console.log(`Tab clicked: ${key}`)
+}
 </script>
 
 <template>
@@ -258,24 +263,14 @@ watch(screenWidth, (newWidth, oldWidth) => {
             <MoveRight />
           </button>
         </div>
-
-        <div class="flex justify-center mt-6 gap-2">
-          <span
-            v-for="(value, index) in Object.keys(dashboardOptions)"
-            :key="index"
-            class="w-3 h-3 rounded-full transition-all duration-300 md:hidden"
-            :class="{
-              'bg-purple-700 scale-110': index === currentIndex,
-              'bg-purple-300': index !== currentIndex,
-            }"
-          ></span>
-        </div>
       </div>
     </div>
 
-    <FilterWrapper />
+    <div class="flex items-center justify-center w-full">
+      <FilterWrapper @tab-clicked="(key) => handleTab(key)" />
+    </div>
 
-    <div class="px-4 md:p-8 max-w-7xl mx-auto mt-8 w-full overflow-scroll">
+    <div class="px-4 md:px-8 max-w-7xl mx-auto w-full overflow-scroll">
       <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
     </div>
 
