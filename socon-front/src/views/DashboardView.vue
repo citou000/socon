@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import DataTable from '@/components/DataTable.vue'
 import Sidebar from '@/components/SideBar.vue'
 import ReportInput from '@/components/ReportInput.vue'
@@ -7,6 +7,12 @@ import MemberEdit from '@/components/MemberEdit.vue'
 import { MoveLeft } from 'lucide-vue-next'
 import { MoveRight } from 'lucide-vue-next'
 import FilterWrapper from '@/components/FilterWrapper.vue'
+import { useMemberStore } from '@/store/member'
+import { storeToRefs } from 'pinia'
+
+const store = useMemberStore()
+
+const { members, stats, headers } = storeToRefs(store)
 
 let intervalId = null
 
@@ -17,127 +23,12 @@ const handleResize = () => {
   screenWidth.value = window.innerWidth
 }
 
-const members = ref([
-  {
-    name: 'John Doe',
-    formation: 'Catéchisme 101',
-    mentor: 'Pasteur Alice',
-    baptismStatus: true,
-    details: {
-      'Semaine 1': 'A commencé le Catéchisme 101, a assisté à 2 sessions.',
-      'Semaine 2': 'A terminé le chapitre 1, actif dans la discussion de groupe.',
-      'Semaine 3': 'A manqué la session, à suivre avec le mentor.',
-    },
-  },
-  {
-    name: 'Jane Smith',
-    formation: 'Étude biblique',
-    mentor: 'Diacre Bob',
-    baptismStatus: true,
-    details: {
-      'Semaine 1': "A rejoint l'Étude biblique, a lu Genèse 1-5.",
-      'Semaine 2': 'A participé à la discussion, a posé des questions.',
-      'Semaine 3': 'Se prépare pour la prochaine session, révision avec le mentor.',
-    },
-  },
-  {
-    name: 'Mary Johnson',
-    formation: 'Cours de discipulat',
-    mentor: 'Sœur Clara',
-    baptismStatus: true,
-    details: {
-      'Semaine 1': "A commencé le Cours de discipulat, a assisté à l'introduction.",
-      'Semaine 2': 'A dirigé une petite session de groupe.',
-      'Semaine 3': 'A planifié la prochaine réunion avec le mentor.',
-    },
-  },
-  {
-    name: 'Peter Brown',
-    formation: 'Classe des nouveaux croyants',
-    mentor: 'Pasteur Alice',
-    baptismStatus: true,
-    details: {
-      'Semaine 1': 'A assisté au premier cours, a été initié aux bases.',
-      'Semaine 2': 'A posé des questions sur le processus de baptême.',
-      'Semaine 3': 'A manqué le cours, le mentor doit faire un suivi.',
-    },
-  },
-  {
-    name: 'Sophie Dubois',
-    formation: 'Groupe de louange',
-    mentor: 'Frère Marc',
-    baptismStatus: false,
-    details: {
-      'Semaine 1': 'A rejoint le groupe de louange, a participé à la première répétition.',
-      'Semaine 2': "A appris de nouveaux chants, s'est bien intégrée.",
-      'Semaine 3': "A aidé à organiser le matériel, montre de l'enthousiasme.",
-      'Semaine 4': 'A chanté en solo pour la première fois, très encourageant.',
-    },
-  },
-  {
-    name: 'Michel Laurent',
-    formation: 'Service communautaire',
-    mentor: 'Sœur Anne',
-    baptismStatus: true,
-    details: {
-      'Semaine 1': 'A participé à une distribution de repas aux sans-abris.',
-      'Semaine 2': 'A aidé à nettoyer le centre communautaire.',
-      'Semaine 3': 'A organisé une collecte de vêtements, très engagé.',
-      'Semaine 4': "A témoigné de son expérience, a inspiré d'autres.",
-    },
-  },
-  {
-    name: 'Chloé Martin',
-    formation: 'École du dimanche',
-    mentor: 'Diacre Paul',
-    baptismStatus: false,
-    details: {
-      'Semaine 1': "A commencé l'École du dimanche, a interagi avec les enfants.",
-      'Semaine 2': "A préparé une leçon sur l'histoire de David.",
-      'Semaine 3': "A géré un groupe d'enfants difficiles avec patience.",
-      'Semaine 4': 'A reçu des retours positifs des parents.',
-    },
-  },
-  {
-    name: 'Thomas Bernard',
-    formation: 'Cours de théologie',
-    mentor: 'Professeur Jean',
-    baptismStatus: true,
-    details: {
-      'Semaine 1': 'A débuté le cours de théologie, a lu les textes fondamentaux.',
-      'Semaine 2': 'A participé activement aux débats, a posé des questions profondes.',
-      'Semaine 3': 'A soumis un essai sur la doctrine de la grâce.',
-      'Semaine 4': "A obtenu d'excellents résultats à l'examen de mi-parcours.",
-    },
-  },
-])
-
-const stats = (list) => {
-  let saved = 0
-  let mentored = 0
-
-  list.forEach((soul) => {
-    if (soul.baptismStatus) saved++
-    if (soul.details && Object.keys(soul.details).length > 0) mentored++
-  })
-
-  return {
-    'Ayant fait la prière du salut': Math.round((saved / list.length) * 100),
-    Âmes: list.length,
-    Suivi: Math.round((mentored / list.length) * 100),
-  }
-}
-
-const dashboardOptions = computed(() => stats(members.value))
-const headers = ref(['Noms', 'Formations', 'Mentor', 'Prière du salut', 'Details'])
-
 const isSidebarOpen = ref(false)
-const selectedMember = ref(null)
+const selectedMember = store.selectedMember
 const isReporting = ref(false)
 const isEditing = ref(false)
 
-const handleColumnClick = ({ member }) => {
-  selectedMember.value = member
+const handleColumnClick = () => {
   isSidebarOpen.value = true
 }
 
@@ -170,14 +61,10 @@ const handleMemberSaving = (updatedMember) => {
 const move = (direction) => {
   if (direction === 'left') {
     currentIndex.value =
-      currentIndex.value > 0
-        ? currentIndex.value - 1
-        : Object.keys(dashboardOptions.value).length - 1
+      currentIndex.value > 0 ? currentIndex.value - 1 : Object.keys(stats.value).length - 1
   } else {
     currentIndex.value =
-      currentIndex.value < Object.keys(dashboardOptions.value).length - 1
-        ? currentIndex.value + 1
-        : 0
+      currentIndex.value < Object.keys(stats.value).length - 1 ? currentIndex.value + 1 : 0
   }
 }
 
@@ -228,11 +115,7 @@ const handleTab = (key) => {
               transform: `translateX(-${currentIndex * 100}%)`,
             }"
           >
-            <div
-              v-for="(value, key) in dashboardOptions"
-              :key="key"
-              class="w-full shrink-0 md:shrink p-4"
-            >
+            <div v-for="(value, key) in stats" :key="key" class="w-full shrink-0 md:shrink p-4">
               <div
                 class="bg-purple-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 transition-all duration-300 ease-in-out rounded-2xl h-full"
               >
@@ -270,7 +153,7 @@ const handleTab = (key) => {
       <FilterWrapper @tab-clicked="(key) => handleTab(key)" />
     </div>
 
-    <div class="px-4 md:p-8 max-w-7xl mx-auto mt-8 w-full overflow-scroll">
+    <div class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll">
       <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
     </div>
 

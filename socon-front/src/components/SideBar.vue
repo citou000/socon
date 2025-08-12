@@ -1,17 +1,25 @@
 <script setup>
 //SideBar.vue
+import { computed } from 'vue'
 import Accordion from '@/components/AccordionWrapper.vue'
 import AccordionItem from '@/components/AccordionItem.vue'
+import { useMemberStore } from '@/store/member'
 import { X } from 'lucide-vue-next'
 
 const emit = defineEmits(['close', 'addReport', 'editMember'])
 
-const props = defineProps({
-  member: {
-    type: Object,
-    default: null,
-  },
+const store = useMemberStore()
+
+const member = computed(() => {
+  return store.selectedMember
 })
+
+// const props = defineProps({
+//   member: {
+//     type: Object,
+//     default: null,
+//   },
+// })
 
 const close = () => {
   console.log('Closing the Sidebar')
@@ -40,15 +48,15 @@ const editMember = () => {
         </button>
       </div>
 
-      <div v-if="props.member" class="space-y-4">
+      <div v-if="member" class="space-y-4 flex flex-col">
         <h2 class="font-bold text-5xl text-purple-800 flex justify-between">
           {{ member.name }}
         </h2>
         <p class="font-bold flex justify-between">
-          <span class="font-semibold text-gray-600">Formation:</span> {{ member.formation }}
+          <span class="font-semibold text-gray-600">Quartier:</span> {{ member.neighborhood }}
         </p>
         <p class="font-bold flex justify-between">
-          <span class="font-semibold text-gray-600">Mentor:</span> {{ member.mentor }}
+          <span class="font-semibold text-gray-600">Groupe:</span> {{ member.group }}
         </p>
         <p class="font-bold flex justify-between items-center">
           <span class="font-semibold text-gray-600">Prière du salut:</span>
@@ -57,12 +65,12 @@ const editMember = () => {
               'py-1',
               'px-4',
               'rounded-sm',
-              member.baptismStatus
+              member.salvationStatus
                 ? 'text-green-500 bg-green-400/10'
                 : 'text-red-500 bg-red-400/10',
             ]"
           >
-            {{ member.baptismStatus ? 'Oui' : 'Non' }}
+            {{ member.salvationStatus ? 'Oui' : 'Non' }}
           </span>
         </p>
 
@@ -78,7 +86,10 @@ const editMember = () => {
           </AccordionItem>
         </Accordion>
 
-        <button class="py-2 w-full text-gray-500 font-bold cursor-pointer" @click="addReport">
+        <button
+          class="py-2 w-fit self-center text-gray-500 font-bold cursor-pointer hover:bg-gray-400/20 px-2 rounded-sm"
+          @click="addReport"
+        >
           <span>+</span>
           Ajouter un rapport
         </button>

@@ -29,7 +29,9 @@ const close = () => {
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-center items-center z-40 p-5">
+  <div
+    class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-center items-center z-40 p-5"
+  >
     <div class="md:w-[40%] bg-white rounded-lg p-6 shadow-xl relative flex flex-col gap-4">
       <X
         class="size-6 cursor-pointer hover:text-red-500 font-bold transition-colors duration-100"
@@ -50,14 +52,8 @@ const close = () => {
         ></textarea>
       </div>
       <div class="flex justify-end gap-4 mt-4">
-        <BaseButton
-          :bg="'bg-purple-600'"
-          :hoverBg="'bg-purple-700'"
-          :color="'text-white'"
-          @click="handleSubmission"
-          >Soumettre</BaseButton
-        >
-        <BaseButton @click="close">Annuler</BaseButton>
+        <BaseButton variant="primary" @click="handleSubmission">Soumettre</BaseButton>
+        <BaseButton @click="close" variant="no_border">Annuler</BaseButton>
       </div>
     </div>
   </div>
