@@ -38,9 +38,13 @@ const editMember = () => {
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end">
+  <div
+    class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end"
+    style="height: calc(var(--vh) * 100)"
+    @click="close"
+  >
     <div
-      class="bg-white w-full md:w-1/3 h-full p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col"
+      class="bg-white w-full md:w-1/3 h-screen p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col"
     >
       <div class="flex justify-between items-center mb-4">
         <button @click="close" class="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer">

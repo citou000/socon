@@ -12,7 +12,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-})
+  width: {
+    type: Boolean,
+    default: true,
+  },
+  rounded: {
+    type: Boolean,
+    default: false,
+  },
+  margin: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const classes = {
   primary: {
@@ -32,7 +44,7 @@ const classes = {
     text: 'text-gray-800',
     border: '',
   },
-}
+};
 </script>
 
 <template>
@@ -40,7 +52,7 @@ const classes = {
     :class="[
       'px-2',
       'py-2',
-      'rounded-md',
+      props.rounded ? 'rounded-full' : 'rounded-md',
       'font-semibold',
       'cursor-pointer',
       'transition-colors',
@@ -49,11 +61,12 @@ const classes = {
       'items-center',
       'justify-center',
       'gap-2',
-      'w-full',
+      props.width ? 'w-full' : 'w-fit',
       classes[props.variant].bg,
       classes[props.variant].hover,
       classes[props.variant].text,
       classes[props.variant].border,
+      props.margin ? 'mt-2' : '',
     ]"
     @click="$emit('event')"
   >

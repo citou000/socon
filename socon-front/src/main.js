@@ -1,4 +1,11 @@
 // main.js
+function setVH() {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)
+}
+window.addEventListener('resize', setVH)
+setVH()
+
+// main.js
 import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'

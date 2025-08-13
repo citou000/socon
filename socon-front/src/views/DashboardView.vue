@@ -1,107 +1,108 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
-import DataTable from '@/components/DataTable.vue'
-import Sidebar from '@/components/SideBar.vue'
-import ReportInput from '@/components/ReportInput.vue'
-import MemberEdit from '@/components/MemberEdit.vue'
-import { MoveLeft } from 'lucide-vue-next'
-import { MoveRight } from 'lucide-vue-next'
-import FilterWrapper from '@/components/FilterWrapper.vue'
-import { useMemberStore } from '@/store/member'
-import { storeToRefs } from 'pinia'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import DataTable from '@/components/DataTable.vue';
+import Sidebar from '@/components/SideBar.vue';
+import ReportInput from '@/components/ReportInput.vue';
+import MemberEdit from '@/components/MemberEdit.vue';
+import { MoveLeft, MoveRight, ChevronDown } from 'lucide-vue-next';
+import FilterWrapper from '@/components/FilterWrapper.vue';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
+import BaseButton from '@/components/BaseButton.vue';
 
-const store = useMemberStore()
+const store = useMemberStore();
 
-const { members, stats, headers } = storeToRefs(store)
+const { members, stats, headers, keys, isAll, limit } = storeToRefs(store);
 
-let intervalId = null
+let intervalId = null;
 
-const currentIndex = ref(0)
-const screenWidth = ref(window.innerWidth)
+const currentIndex = ref(0);
+const screenWidth = ref(window.innerWidth);
 
 const handleResize = () => {
-  screenWidth.value = window.innerWidth
-}
+  screenWidth.value = window.innerWidth;
+};
 
-const isSidebarOpen = ref(false)
-const selectedMember = store.selectedMember
-const isReporting = ref(false)
-const isEditing = ref(false)
+const isSidebarOpen = ref(false);
+const selectedMember = store.selectedMember;
+const isReporting = ref(false);
+const isEditing = ref(false);
 
 const handleColumnClick = () => {
-  isSidebarOpen.value = true
-}
+  isSidebarOpen.value = true;
+};
 
 const handleReporting = () => {
-  isReporting.value = true
-}
+  isReporting.value = true;
+};
 
 const handleSubmission = (report) => {
   if (!report || !selectedMember.value) {
-    alert('Veuillez entrer un rapport valide.')
-    return
+    alert('Veuillez entrer un rapport valide.');
+    return;
   }
-  const week = `Semaine ${Object.keys(selectedMember.value.details).length + 1}`
-  selectedMember.value.details[week] = report
-  isReporting.value = false
-}
+  const week = `Semaine ${Object.keys(selectedMember.value.details).length + 1}`;
+  selectedMember.value.details[week] = report;
+  isReporting.value = false;
+};
 
 const handleMemberEditing = () => {
-  isEditing.value = true
-}
+  isEditing.value = true;
+};
 
 const handleMemberSaving = (updatedMember) => {
-  selectedMember.value = updatedMember
-  isEditing.value = false
+  selectedMember.value = updatedMember;
+  isEditing.value = false;
   members.value = members.value.map((member) =>
     member.name === updatedMember.name ? updatedMember : member,
-  )
-}
+  );
+};
 
 const move = (direction) => {
   if (direction === 'left') {
     currentIndex.value =
-      currentIndex.value > 0 ? currentIndex.value - 1 : Object.keys(stats.value).length - 1
+      currentIndex.value > 0 ? currentIndex.value - 1 : Object.keys(stats.value).length - 1;
   } else {
     currentIndex.value =
-      currentIndex.value < Object.keys(stats.value).length - 1 ? currentIndex.value + 1 : 0
+      currentIndex.value < Object.keys(stats.value).length - 1 ? currentIndex.value + 1 : 0;
   }
-}
+};
 
 function startAutoSlide() {
-  clearInterval(intervalId)
-  intervalId = setInterval(() => move('right'), 5000)
+  clearInterval(intervalId);
+  intervalId = setInterval(() => move('right'), 5000);
 }
 
 function stopAutoSlide() {
-  currentIndex.value = 0
-  clearInterval(intervalId)
+  currentIndex.value = 0;
+  clearInterval(intervalId);
 }
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
+  window.addEventListener('resize', handleResize);
   if (screenWidth.value < 768) {
-    startAutoSlide()
+    startAutoSlide();
   }
-})
+  store.loadMembers();
+});
 
 onBeforeUnmount(() => {
-  stopAutoSlide()
-  window.removeEventListener('resize', handleResize)
-})
+  stopAutoSlide();
+  window.removeEventListener('resize', handleResize);
+});
 
 watch(screenWidth, (newWidth, oldWidth) => {
   if (newWidth < 768 && oldWidth >= 768) {
-    startAutoSlide()
+    startAutoSlide();
   } else {
-    stopAutoSlide()
+    stopAutoSlide();
   }
-})
+});
 
 const handleTab = (key) => {
   // Handle tab click logic here
-  console.log(`Tab clicked: ${key}`)
-}
+  console.log(`Tab clicked: ${key}`);
+};
 </script>
 
 <template>
@@ -120,10 +121,10 @@ const handleTab = (key) => {
                 class="bg-purple-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 transition-all duration-300 ease-in-out rounded-2xl h-full"
               >
                 <span class="self-start text-lg sm:text-xl font-mono font-semibold text-purple-800">
-                  {{ key }}
+                  {{ keys[key] }}
                 </span>
                 <span class="text-6xl sm:text-7xl lg:text-8xl font-semibold text-purple-900 mt-2">
-                  {{ value }}<span v-if="key !== 'Âmes'">%</span>
+                  {{ value }}<span v-if="key !== 'souls'">%</span>
                 </span>
               </div>
             </div>
@@ -153,8 +154,20 @@ const handleTab = (key) => {
       <FilterWrapper @tab-clicked="(key) => handleTab(key)" />
     </div>
 
-    <div class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll">
+    <div class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center">
       <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
+      <BaseButton
+        v-if="!isAll"
+        variant="no_border"
+        :width="false"
+        :rounded="true"
+        :margin="true"
+        class="text-purple-900 hover:text-purple-800"
+        @click="store.showMore(limit)"
+      >
+        <ChevronDown />
+        Plus
+      </BaseButton>
     </div>
 
     <Sidebar

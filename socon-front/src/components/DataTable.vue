@@ -14,14 +14,17 @@ const selectMemberAndEmit = (i) => {
 </script>
 
 <template>
-  <div class="relative bg-purple-50 px-8 pt-4 rounded-t-lg">
-    <table class="w-full text-sm px-2">
-      <thead class="rounded-t-lg px-2">
+  <div class="relative bg-purple-50 rounded-t-lg overflow-x-auto w-full">
+    <table class="w-full text-sm">
+      <thead>
         <tr>
           <th
             v-for="header in headers"
             :key="header"
-            class="p-2 text-left font-semibold cursor-default text-xl border-b-2 border-gray-300"
+            :class="[
+              'p-2 text-left font-semibold cursor-default text-xl border-b-2 border-gray-300',
+              ['Détails', 'Quartier'].includes(header) ? 'hidden md:table-cell' : '',
+            ]"
           >
             {{ header }}
           </th>
@@ -40,7 +43,7 @@ const selectMemberAndEmit = (i) => {
           </td>
 
           <!-- Groupe -->
-          <td class="p-3 text-gray-600">
+          <td class="p-3 text-gray-600 hidden md:table-cell">
             {{ i.neighborhood }}
           </td>
 
@@ -53,9 +56,7 @@ const selectMemberAndEmit = (i) => {
           <td class="p-3 text-center">
             <span
               :class="[
-                'py-1',
-                'px-2',
-                'rounded-sm',
+                'py-1 px-2 rounded-sm',
                 i.salvationStatus ? 'text-green-500 bg-green-400/20' : 'text-red-500 bg-red-400/20',
               ]"
             >
@@ -64,14 +65,12 @@ const selectMemberAndEmit = (i) => {
           </td>
 
           <!-- Dernière note disponible -->
-          <td class="p-3">
-            <div>
-              {{
-                Object.values(i.details).length
-                  ? Object.values(i.details).at(-1)
-                  : 'Aucun rapport disponible'
-              }}
-            </div>
+          <td class="p-3 hidden md:table-cell">
+            {{
+              Object.values(i.details).length
+                ? Object.values(i.details).at(-1)
+                : 'Aucun rapport disponible'
+            }}
           </td>
         </tr>
       </tbody>
