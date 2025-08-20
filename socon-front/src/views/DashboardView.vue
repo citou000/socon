@@ -106,7 +106,7 @@ const handleTab = (key) => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-purple-50 flex flex-col gap-4">
+  <main class="min-h-screen flex flex-col gap-4">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto relative flex flex-col items-center">
         <div class="overflow-hidden w-full">

@@ -1,18 +1,18 @@
 <script setup>
 //SideBar.vue
-import { computed } from 'vue'
-import Accordion from '@/components/AccordionWrapper.vue'
-import AccordionItem from '@/components/AccordionItem.vue'
-import { useMemberStore } from '@/store/member'
-import { X } from 'lucide-vue-next'
+import { computed } from 'vue';
+import Accordion from '@/components/AccordionWrapper.vue';
+import AccordionItem from '@/components/AccordionItem.vue';
+import { useMemberStore } from '@/store/member';
+import { X } from 'lucide-vue-next';
 
-const emit = defineEmits(['close', 'addReport', 'editMember'])
+const emit = defineEmits(['close', 'addReport', 'editMember']);
 
-const store = useMemberStore()
+const store = useMemberStore();
 
 const member = computed(() => {
-  return store.selectedMember
-})
+  return store.selectedMember;
+});
 
 // const props = defineProps({
 //   member: {
@@ -22,27 +22,23 @@ const member = computed(() => {
 // })
 
 const close = () => {
-  console.log('Closing the Sidebar')
-  emit('close')
-}
+  console.log('Closing the Sidebar');
+  emit('close');
+};
 
 const addReport = () => {
-  console.log('Adding a report')
-  emit('addReport')
-}
+  console.log('Adding a report');
+  emit('addReport');
+};
 
 const editMember = () => {
-  emit('editMember')
+  emit('editMember');
   // Logic to edit the member can be added here
-}
+};
 </script>
 
 <template>
-  <div
-    class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end"
-    style="height: calc(var(--vh) * 100)"
-    @click="close"
-  >
+  <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end">
     <div
       class="bg-white w-full md:w-1/3 h-screen p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col"
     >
@@ -83,12 +79,14 @@ const editMember = () => {
           <span class="font-semibold text-gray-600">Détails</span>
         </p>
 
-        <!-- Use your custom Accordion -->
-        <Accordion class="border-t-2 border-gray-300">
-          <AccordionItem v-for="(report, week) in member.details" :key="week" :title="week">
-            <p>{{ report }}</p>
-          </AccordionItem>
-        </Accordion>
+        <div>
+          <!-- Use your custom Accordion -->
+          <Accordion class="border-t-2 border-gray-300">
+            <AccordionItem v-for="(report, week) in member.details" :key="week" :title="week">
+              <p>{{ report }}</p>
+            </AccordionItem>
+          </Accordion>
+        </div>
 
         <button
           class="py-2 w-fit self-center text-gray-500 font-bold cursor-pointer hover:bg-gray-400/20 px-2 rounded-sm"

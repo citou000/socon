@@ -1,28 +1,28 @@
 <script setup>
-import { useMemberStore } from '@/store/member'
-import { storeToRefs } from 'pinia'
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
 
-const store = useMemberStore()
-const { members, headers } = storeToRefs(store)
+const store = useMemberStore();
+const { members, headers } = storeToRefs(store);
 
-const emit = defineEmits(['column-click'])
+const emit = defineEmits(['column-click']);
 
 const selectMemberAndEmit = (i) => {
-  store.selectMember(i)
-  emit('column-click')
-}
+  store.selectMember(i);
+  emit('column-click');
+};
 </script>
 
 <template>
-  <div class="relative bg-purple-50 rounded-t-lg overflow-x-auto w-full">
-    <table class="w-full text-sm">
+  <div class="relative rounded-t-lg overflow-x-auto w-full">
+    <table class="w-full text-sm border-b-2 border-gray-300">
       <thead>
         <tr>
           <th
             v-for="header in headers"
             :key="header"
             :class="[
-              'p-2 text-left font-semibold cursor-default text-xl border-b-2 border-gray-300',
+              'p-2 text-left font-semibold cursor-default text-xl',
               ['Détails', 'Quartier'].includes(header) ? 'hidden md:table-cell' : '',
             ]"
           >
@@ -34,7 +34,7 @@ const selectMemberAndEmit = (i) => {
         <tr
           v-for="i in members"
           :key="i.id"
-          class="hover:bg-gray-100 cursor-pointer border-b-2 border-gray-300"
+          class="hover:bg-gray-100 cursor-pointer border-t-2 border-gray-300"
           @click="selectMemberAndEmit(i)"
         >
           <!-- Nom -->
