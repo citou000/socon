@@ -10,6 +10,7 @@
     </div>
 
     <!-- Collapsible content -->
+
     <transition name="accordion">
       <div v-show="isOpen" class="pl-2 pb-3 text-gray-700 text-sm">
         <slot />
@@ -20,23 +21,23 @@
 
 <script setup>
 // src/components/AccordionItem.vue
-import { inject, computed } from 'vue'
+import { inject, computed } from 'vue';
 
 const props = defineProps({
   title: {
     type: String,
     required: true,
   },
-})
+});
 
 // Shared state from Accordion.vue
-const openItem = inject('openItem', null)
+const openItem = inject('openItem', null);
 
-const isOpen = computed(() => openItem?.value === props.title)
+const isOpen = computed(() => openItem?.value === props.title);
 
 function toggle() {
   if (openItem) {
-    openItem.value = isOpen.value ? null : props.title
+    openItem.value = isOpen.value ? null : props.title;
   }
 }
 </script>

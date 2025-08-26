@@ -4,6 +4,7 @@ import DataTable from '@/components/DataTable.vue';
 import Sidebar from '@/components/SideBar.vue';
 import ReportInput from '@/components/ReportInput.vue';
 import MemberEdit from '@/components/MemberEdit.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { MoveLeft, MoveRight, ChevronDown } from 'lucide-vue-next';
 import FilterWrapper from '@/components/FilterWrapper.vue';
 import { useMemberStore } from '@/store/member';
@@ -12,7 +13,7 @@ import BaseButton from '@/components/BaseButton.vue';
 
 const store = useMemberStore();
 
-const { members, stats, headers, keys, isAll, limit } = storeToRefs(store);
+const { members, stats, keys, isAll, limit, isLoading } = storeToRefs(store);
 
 let intervalId = null;
 
@@ -154,8 +155,14 @@ const handleTab = (key) => {
       <FilterWrapper @tab-clicked="(key) => handleTab(key)" />
     </div>
 
-    <div class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center">
-      <DataTable :data="members" :headers="headers" @column-click="handleColumnClick" />
+    <div v-if="isLoading" class="flex justify-center items-center p-8">
+      <LoadingSpinner size="lg" />
+    </div>
+    <div
+      v-else
+      class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center"
+    >
+      <DataTable @column-click="handleColumnClick" />
       <BaseButton
         v-if="!isAll"
         variant="no_border"

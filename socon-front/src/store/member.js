@@ -1,30 +1,41 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
+import { supabase } from '@/lib/supabaseClient';
 
 export const useMemberStore = defineStore('member', () => {
   const allMembers = ref([]);
-  const loading = ref(false);
+  const isLoading = ref(false);
   const error = ref(null);
   const selectedMember = ref(null);
   const limit = ref(25);
   const isAll = ref(false);
+  const details = ref();
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
 
   const loadMembers = async () => {
-    loading.value = true;
+    isLoading.value = true;
     error.value = null;
     try {
-      const res = await fetch('/data.json'); // ✅ Correct path
-      if (!res.ok) throw new Error('Impossible de charger les données');
+      const { data } = await supabase.from('souls').select(`*`);
+      const { data: detail } = await supabase.from('details').select(`details`);
+      allMembers.value = data;
+      details.value = detail;
 
-      allMembers.value = await res.json();
-      console.log('Loaded members:', allMembers.value); // Debug
+      const sample = details.value.map((m) => {
+        return JSON.parse(m.details);
+      });
+      console.log('Details', sample);
+      allMembers.value = allMembers.value.map((m) => ({
+        ...m,
+        details:sample[m.id],
+      }));
+      console.log('Loaded members:', allMembers.value);
     } catch (err) {
       error.value = err.message;
       console.error('Fetch error:', err);
     } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
   };
 
@@ -102,7 +113,7 @@ export const useMemberStore = defineStore('member', () => {
     members,
     headers,
     stats,
-    loading,
+    isLoading,
     error,
     loadMembers,
     selectMember,

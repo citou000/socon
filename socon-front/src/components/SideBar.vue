@@ -80,9 +80,12 @@ const editMember = () => {
         </p>
 
         <div>
-          <!-- Use your custom Accordion -->
           <Accordion class="border-t-2 border-gray-300">
-            <AccordionItem v-for="(report, week) in member.details" :key="week" :title="week">
+            <AccordionItem
+              v-for="(report, week, index) in member.details"
+              :key="week"
+              :title="`Semaine ${index + 1}`"
+            >
               <p>{{ report }}</p>
             </AccordionItem>
           </Accordion>
