@@ -107,7 +107,7 @@ export const useMemberStore = defineStore('member', () => {
     }
 
     // 3️⃣ Update Supabase
-    const { data: updatedData, error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from('details')
       .update({ details: JSON.stringify(details) })
       .eq('soul_id', id)
