@@ -1,25 +1,15 @@
 <script setup>
-//SideBar.vue
-import { computed } from 'vue';
 import Accordion from '@/components/AccordionWrapper.vue';
 import AccordionItem from '@/components/AccordionItem.vue';
 import { useMemberStore } from '@/store/member';
 import { X } from 'lucide-vue-next';
+import { storeToRefs } from 'pinia';
 
 const emit = defineEmits(['close', 'addReport', 'editMember']);
 
 const store = useMemberStore();
 
-const member = computed(() => {
-  return store.selectedMember;
-});
-
-// const props = defineProps({
-//   member: {
-//     type: Object,
-//     default: null,
-//   },
-// })
+const { selectedMember: member } = storeToRefs(store);
 
 const close = () => {
   console.log('Closing the Sidebar');
@@ -80,15 +70,19 @@ const editMember = () => {
         </p>
 
         <div>
-          <Accordion class="border-t-2 border-gray-300">
+          <Accordion
+            v-if="member.details && Object.keys(member.details).length > 0"
+            class="border-t-2 border-gray-300"
+          >
             <AccordionItem
               v-for="(report, week, index) in member.details"
               :key="week"
               :title="`Semaine ${index + 1}`"
             >
-              <p>{{ report }}</p>
+              <p class="text-gray-700 whitespace-pre-line">{{ report }}</p>
             </AccordionItem>
           </Accordion>
+          <p v-else class="text-gray-500 italic text-center">Aucun rapport disponible</p>
         </div>
 
         <button

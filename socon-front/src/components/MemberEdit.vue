@@ -1,49 +1,49 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { X } from 'lucide-vue-next'
-import BaseButton from '@/components/BaseButton.vue'
-import { useMemberStore } from '@/store/member'
-import { storeToRefs } from 'pinia'
+import { ref, watch } from 'vue';
+import { X } from 'lucide-vue-next';
+import BaseButton from '@/components/BaseButton.vue';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
 
-const store = useMemberStore()
+const store = useMemberStore();
 
-const { selectedMember } = storeToRefs(store)
+const { selectedMember } = storeToRefs(store);
 
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(['close', 'save']);
 
-const name = ref('')
-const soulHarvesters = ref('')
-const neighborhood = ref('')
-const salvationStatus = ref(false)
+const name = ref('');
+const soulHarvesters = ref('');
+const neighborhood = ref('');
+const salvationStatus = ref(false);
 
 watch(
   selectedMember,
   (val) => {
     if (val) {
-      name.value = val.name
-      neighborhood.value = val.neighborhood
-      soulHarvesters.value = val.soulHarvesters
-      salvationStatus.value = val.salvationStatus
+      name.value = val.name;
+      neighborhood.value = val.neighborhood;
+      soulHarvesters.value = val.soulHarvesters;
+      salvationStatus.value = val.salvationStatus;
     }
   },
   { immediate: true },
-)
+);
 
-const handleSave = () => {
-  const updatedMember = {
-    ...selectedMember.value,
+const handleSave = async () => {
+  const id = selectedMember.value.id;
+  const updates = {
     name: name.value,
     neighborhood: neighborhood.value,
     soulHarvesters: soulHarvesters.value,
     salvationStatus: salvationStatus.value,
-  }
-  store.updateMember(updatedMember)
-  emit('close')
-}
+  };
+  await store.updateMember(id, updates);
+  emit('close');
+};
 
 const close = () => {
-  emit('close')
-}
+  emit('close');
+};
 </script>
 
 <template>

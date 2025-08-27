@@ -28,7 +28,7 @@ export const useMemberStore = defineStore('member', () => {
       console.log('Details', sample);
       allMembers.value = allMembers.value.map((m) => ({
         ...m,
-        details:sample[m.id],
+        details: sample[m.id],
       }));
       console.log('Loaded members:', allMembers.value);
     } catch (err) {
@@ -55,43 +55,26 @@ export const useMemberStore = defineStore('member', () => {
     selectedMember.value = member;
   }
 
-  function updateMember(updatedMember) {
-    const index = allMembers.value.findIndex((m) => m.id === updatedMember.id);
+  const updateMember = async (id, updates) => {
+    const { data, error } = await supabase.from('souls').update(updates).eq('id', id).select();
+
+    if (error) throw error;
+
+    const updated = data[0]; // the updated row
+
+    // update local list
+    const index = allMembers.value.findIndex((m) => m.id === id);
     if (index !== -1) {
-      allMembers.value[index] = { ...updatedMember };
-      selectedMember.value = allMembers.value[index];
+      allMembers.value.splice(index, 1, data[0]);
     }
-  }
 
-  // function updateMember(updatedMember) {
-  //   const index = members.value.findIndex((m) => m.id === updatedMember.id)
-  //   if (index !== -1) {  // const listMembers = computed(() => {
-  //   return members.value.slice(0, limit);
-  // });
+    // update selectedMember if it's the same one
+    if (selectedMember.value?.id === id) {
+      selectedMember.value = updated;
+    }
 
-  // const showMore = (actualLimit) => {
-  //   const inc = 15;
-  //   if (actualLimit >= members.value.length || members.value.length - actualLimit < inc) {
-  //     return actualLimit + (members.value.length - actualLimit);
-  //   }
-  //   return (actualLimit += inc);
-  // };
-  // console.log(members.value);
-  //     // Replace the whole object so Vue detects change
-  //     members.value.splice(index, 1, { ...updatedMember })
-
-  //     // Also update selectedMember to the new object
-  //     selectedMember.value = members.value[index]
-  //   }
-  // }
-
-  // function updateMember(updatedMember) {
-  //   const index = members.value.findIndex((m) => m.id === updatedMember.id) // Use ID
-  //   if (index !== -1) {
-  //     members.value[index] = { ...updatedMember }
-  //     selectedMember.value = members.value[index]
-  //   }
-  // }
+    return updated;
+  };
 
   const members = computed(() => {
     return allMembers.value.slice(0, limit.value);
@@ -99,15 +82,20 @@ export const useMemberStore = defineStore('member', () => {
 
   const showMore = (actualLimit) => {
     const inc = 15;
-    if (actualLimit >= allMembers.value.length || allMembers.value.length - actualLimit < inc) {
+    if (actualLimit >= allMembers.value.length || limit.value >= allMembers.value.length) {
+      // We've shown all members
       isAll.value = true;
-      limit.value + (allMembers.value.length - actualLimit);
-      return;
     }
-    limit.value += inc;
-    return;
+
+    // Calculate how many more items we can show
+    const remaining = allMembers.value.length - limit.value;
+    // Add either the increment or all remaining items if less than increment
+    limit.value += Math.min(inc, remaining);
+    console.log(remaining);
   };
+
   console.log(allMembers.value);
+  console.log(members.value);
 
   return {
     members,

@@ -13,7 +13,7 @@ import BaseButton from '@/components/BaseButton.vue';
 
 const store = useMemberStore();
 
-const { members, stats, keys, isAll, limit, isLoading } = storeToRefs(store);
+const { stats, keys, isAll, limit, isLoading } = storeToRefs(store);
 
 let intervalId = null;
 
@@ -49,14 +49,6 @@ const handleSubmission = (report) => {
 
 const handleMemberEditing = () => {
   isEditing.value = true;
-};
-
-const handleMemberSaving = (updatedMember) => {
-  selectedMember.value = updatedMember;
-  isEditing.value = false;
-  members.value = members.value.map((member) =>
-    member.name === updatedMember.name ? updatedMember : member,
-  );
 };
 
 const move = (direction) => {
@@ -189,11 +181,6 @@ const handleTab = (key) => {
       @close="isReporting = false"
       @reportSubmission="handleSubmission"
     />
-    <MemberEdit
-      v-if="isEditing"
-      :member="selectedMember"
-      @close="isEditing = false"
-      @save="handleMemberSaving"
-    />
+    <MemberEdit v-if="isEditing" @close="isEditing = false" />
   </main>
 </template>
