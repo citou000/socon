@@ -10,6 +10,7 @@ export const useMemberStore = defineStore('member', () => {
   const limit = ref(25);
   const isAll = ref(false);
   const details = ref();
+  const inc = 15;
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
 
@@ -17,8 +18,11 @@ export const useMemberStore = defineStore('member', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const { data } = await supabase.from('souls').select(`*`);
-      const { data: detail } = await supabase.from('details').select(`details`);
+      const { data } = await supabase.from('souls').select(`*`).order('id', { ascending: true });
+      const { data: detail } = await supabase
+        .from('details')
+        .select('details, soul_id')
+        .order(`soul_id`, { ascending: true });
       allMembers.value = data;
       details.value = detail;
 
@@ -26,10 +30,8 @@ export const useMemberStore = defineStore('member', () => {
         return JSON.parse(m.details);
       });
       console.log('Details', sample);
-      allMembers.value = allMembers.value.map((m) => ({
-        ...m,
-        details: sample[m.id],
-      }));
+      const detailMap = Object.fromEntries(detail.map((d) => [d.soul_id, JSON.parse(d.details)]));
+      allMembers.value = allMembers.value.map((m) => ({ ...m, details: detailMap[m.id] || {} }));
       console.log('Loaded members:', allMembers.value);
     } catch (err) {
       error.value = err.message;
@@ -62,10 +64,19 @@ export const useMemberStore = defineStore('member', () => {
 
     const updated = data[0]; // the updated row
 
+    const { data: detailData, error: detailError } = await supabase
+      .from('details')
+      .select('details')
+      .eq('soul_id', id)
+      .single();
+    if (detailError && detailError.code !== 'PGRST116') throw detailError; // ignore not found
+
+    updated.details = detailData ? JSON.parse(detailData.details) : {};
+
     // update local list
     const index = allMembers.value.findIndex((m) => m.id === id);
     if (index !== -1) {
-      allMembers.value.splice(index, 1, data[0]);
+      allMembers.value.splice(index, 1, updated);
     }
 
     // update selectedMember if it's the same one
@@ -75,27 +86,68 @@ export const useMemberStore = defineStore('member', () => {
 
     return updated;
   };
+  const handleReporting = async (id, updates) => {
+    // 1️⃣ Fetch current details from Supabase
+    const { data, error } = await supabase
+      .from('details')
+      .select('details')
+      .eq('soul_id', id)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+
+    // 2️⃣ Parse current details and add the new report
+    const details = data && data.details ? JSON.parse(data.details) : {};
+    const today = new Date().toLocaleDateString('fr-FR');
+    if (details[today]) {
+      // If entry exists for today, add new update with proper spacing
+      details[today] = `${details[today]}\n${updates}`;
+    } else {
+      // If no entry exists for today, create new one
+      details[today] = updates;
+    }
+
+    // 3️⃣ Update Supabase
+    const { data: updatedData, error: updateError } = await supabase
+      .from('details')
+      .update({ details: JSON.stringify(details) })
+      .eq('soul_id', id)
+      .select();
+    if (updateError) throw updateError;
+
+    // 4️⃣ Update local store so UI updates immediately
+    const index = allMembers.value.findIndex((m) => m.id === id);
+    if (index !== -1) {
+      // Merge updated details into the member object
+      allMembers.value[index] = {
+        ...allMembers.value[index],
+        details,
+      };
+    }
+
+    // If the selected member is the same one, update it too
+    if (selectedMember.value?.id === id) {
+      selectedMember.value = {
+        ...selectedMember.value,
+        details,
+      };
+    }
+
+    // 5️⃣ Optional: log for debugging
+    console.log('Updated details:', details);
+  };
 
   const members = computed(() => {
     return allMembers.value.slice(0, limit.value);
   });
 
-  const showMore = (actualLimit) => {
-    const inc = 15;
-    if (actualLimit >= allMembers.value.length || limit.value >= allMembers.value.length) {
-      // We've shown all members
-      isAll.value = true;
-    }
-
-    // Calculate how many more items we can show
+  const showMore = () => {
     const remaining = allMembers.value.length - limit.value;
-    // Add either the increment or all remaining items if less than increment
+    if (remaining <= 0) {
+      isAll.value = true;
+      return;
+    }
     limit.value += Math.min(inc, remaining);
-    console.log(remaining);
   };
-
-  console.log(allMembers.value);
-  console.log(members.value);
 
   return {
     members,
@@ -111,5 +163,6 @@ export const useMemberStore = defineStore('member', () => {
     showMore,
     isAll,
     limit,
+    handleReporting,
   };
 });

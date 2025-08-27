@@ -1,31 +1,38 @@
 <script setup>
-import { X } from 'lucide-vue-next'
-import BaseButton from '@/components/BaseButton.vue'
-import { ref } from 'vue'
+import { X } from 'lucide-vue-next';
+import BaseButton from '@/components/BaseButton.vue';
+import { ref } from 'vue';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
 
-const report = ref('')
+const store = useMemberStore();
 
-const emit = defineEmits(['close', 'reportSubmission'])
+const { selectedMember } = storeToRefs(store);
 
-const handleSubmission = () => {
-  console.log('[SUBMIT]', report.value)
+const report = ref('');
 
-  if (report.value.trim() === '') {
-    alert('Le rapport ne peut pas être vide.')
-    return
+const emit = defineEmits(['close', 'reportSubmission']);
+
+const handleSubmission = async () => {
+  if (!selectedMember.value) {
+    console.warn('No member selected. Cannot submit report.');
+    return;
   }
-  emit('reportSubmission', report.value)
-  report.value = '' // Clear the input after submission
-}
+  console.log('report', report.value);
+  console.log('id', selectedMember.value.id);
+  await store.handleReporting(selectedMember.value.id, report.value);
+  report.value = ''; // Clear the input after submission
+  emit('reportSubmission');
+};
 
 if (import.meta.env.VITE_APP_ENV === 'development') {
-  console.log('ReportInput component loaded')
+  console.log('ReportInput component loaded');
 }
 
 const close = () => {
-  console.log('Closing ReportInput')
-  emit('close')
-}
+  console.log('Closing ReportInput');
+  emit('close');
+};
 </script>
 
 <template>

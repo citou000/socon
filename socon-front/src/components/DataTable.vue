@@ -67,7 +67,7 @@ const selectMemberAndEmit = (i) => {
           <!-- Dernière note disponible -->
           <td class="p-3 hidden md:table-cell">
             {{
-              Object.values(i.details).length
+              i.details && Object.values(i.details).length
                 ? Object.values(i.details).at(-1)
                 : 'Aucun rapport disponible'
             }}

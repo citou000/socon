@@ -37,13 +37,7 @@ const handleReporting = () => {
   isReporting.value = true;
 };
 
-const handleSubmission = (report) => {
-  if (!report || !selectedMember.value) {
-    alert('Veuillez entrer un rapport valide.');
-    return;
-  }
-  const week = `Semaine ${Object.keys(selectedMember.value.details).length + 1}`;
-  selectedMember.value.details[week] = report;
+const handleSubmission = () => {
   isReporting.value = false;
 };
 

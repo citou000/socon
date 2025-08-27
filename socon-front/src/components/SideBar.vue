@@ -33,7 +33,7 @@ const editMember = () => {
       class="bg-white w-full md:w-1/3 h-screen p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col"
     >
       <div class="flex justify-between items-center mb-4">
-        <button @click="close" class="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer">
+        <button @click="close" class="text-gray-500 hover:text-red-600 text-2xl cursor-pointer">
           <X />
         </button>
       </div>
