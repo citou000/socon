@@ -43,8 +43,12 @@ export const useMemberStore = defineStore('member', () => {
 
   const stats = computed(() => {
     const souls = allMembers.value.length;
-    const saved = allMembers.value.filter((m) => m.salvationStatus).length;
-    const notSaved = souls - saved;
+    const saved = Math.round(
+      (allMembers.value.filter((m) => m.salvationStatus).length / souls) * 100 || 0,
+    );
+    const notSaved = Math.round(
+      ((souls - allMembers.value.filter((m) => m.salvationStatus).length) / souls) * 100 || 0,
+    );
     return { souls, saved, notSaved };
   });
   const keys = ref({
