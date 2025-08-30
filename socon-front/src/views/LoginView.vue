@@ -1,6 +1,6 @@
 <script setup>
-import BaseButton from '@/components/BaseButton.vue'
-import logo from '@/components/icons/logo.svg'
+import BaseButton from '@/components/BaseButton.vue';
+import logo from '@/components/icons/logo.svg';
 </script>
 
 <template>
@@ -30,8 +30,7 @@ import logo from '@/components/icons/logo.svg'
           />
         </div>
         <div class="flex justify-center mt-4 w-full">
-          <BaseButton :bg="'bg-purple-400'" :hover-bg="'bg-purple-600'" :color="'text-white'"
-            ><span>Se connecter</span></BaseButton
+          <BaseButton variant="primary"><span>Se connecter</span></BaseButton
           >
         </div>
       </form>
