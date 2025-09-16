@@ -15,23 +15,24 @@ const email = ref(null);
 const password = ref(null);
 
 const handleConnect = async () => {
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error, data } = await supabase.auth.signInWithPassword({
     email: email.value,
     password: password.value,
   });
-  if (error) {
-    warn('Error not signed in');
-    throw error;
-  } else {
+  if (!error) {
     warn('Signed in succesfully!');
+    console.log(data);
     router.push('/');
+    return;
   }
+  warn('Error not signed in');
+  throw error;
 };
 </script>
 
 <template>
-  <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7 px-2">
-    <div class="bg-white py-8 rounded-xl flex flex-col gap-4 px-2 md:w-[35%] w-full my-2">
+  <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
+    <div class="bg-white rounded-xl flex flex-col gap-4 md:w-[35%] w-[90%] px-2 mx-4 py-4">
       <div class="flex flex-col items-center">
         <img :src="logo" alt="Logo" class="size-12 object-contain" />
         <h1 class="text-balance text-gray-400">Bon retour sur Soul Connect</h1>

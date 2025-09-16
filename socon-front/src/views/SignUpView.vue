@@ -2,9 +2,10 @@
 import BaseButton from '@/components/BaseButton.vue';
 import logo from '@/components/icons/logo.svg';
 import { supabase } from '@/lib/supabaseClient';
-import { ref } from 'vue';
+import { ref, warn } from 'vue';
 import { useMemberStore } from '@/store/member';
 import { storeToRefs } from 'pinia';
+import router from '@/router';
 
 const store = useMemberStore();
 const { logging } = storeToRefs(store);
@@ -28,7 +29,8 @@ const handleConnect = async () => {
     if (signupError) {
       throw signupError;
     } else {
-      alert('Done');
+      warn('Done');
+      router.push('/confirmation');
     }
   }
 };
@@ -97,7 +99,7 @@ const handleConnect = async () => {
       </form>
       <div class="text-sm items-center text-center mx-auto">
         Vous avez dejà un compte ?
-        <RouterLink to="/signup" class="text-purple-600 font-bold">Connectez-vous</RouterLink>
+        <RouterLink to="/login" class="text-purple-600 font-bold">Connectez-vous</RouterLink>
       </div>
     </div>
   </div>
