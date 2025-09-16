@@ -5,8 +5,8 @@ import SignUpView from '@/views/SignUpView.vue';
 import { useAuth } from '@/store/auth';
 
 const routes = [
-  { path: '/login', component: SignUpView },
-  { path: '/signup', component: LoginView },
+  { path: '/signup', component: SignUpView },
+  { path: '/login', component: LoginView },
   { path: '/', component: DashboardView, meta: { requiresAuth: true } },
 ];
 

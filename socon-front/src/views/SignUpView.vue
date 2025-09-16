@@ -1,6 +1,37 @@
 <script setup>
 import BaseButton from '@/components/BaseButton.vue';
 import logo from '@/components/icons/logo.svg';
+import { supabase } from '@/lib/supabaseClient';
+import { ref } from 'vue';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
+
+const store = useMemberStore();
+const { logging } = storeToRefs(store);
+logging.value = true;
+
+const email = ref(null);
+const password = ref(null);
+const confirmedPassword = ref(null);
+const name = ref(null);
+
+const handleConnect = async () => {
+  if (password.value !== confirmedPassword.value) {
+    console.log('Passwords do not match');
+    alert('Passwords do not match');
+    return;
+  } else {
+    const { error: signupError } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+    });
+    if (signupError) {
+      throw signupError;
+    } else {
+      alert('Done');
+    }
+  }
+};
 </script>
 
 <template>
@@ -10,32 +41,54 @@ import logo from '@/components/icons/logo.svg';
         <img :src="logo" alt="Logo" class="size-12 object-contain" />
         <h1 class="text-balance text-gray-400">Bienvenue sur Soul Connect</h1>
       </div>
-      <form action="" class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full">
+      <form
+        action=""
+        class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full"
+        @submit.prevent="handleConnect"
+      >
         <div class="flex flex-col gap-1 w-full">
           <label for="name">Name</label>
           <input
+            required
             type="text"
             name="Name"
             id="name"
-            class="border-2 border-purple-200 text-xl focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+            v-model="name"
+            class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
         <div class="flex flex-col gap-1 w-full">
-          <label for="name">Password</label>
+          <label for="email">E-mail</label>
           <input
-            type="password"
-            name="Name"
-            id="name"
-            class="border-2 border-purple-200 text-xl focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+            required
+            type="email"
+            name="email"
+            id="email"
+            v-model="email"
+            class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
         <div class="flex flex-col gap-1 w-full">
-          <label for="name">Confirmer le mot de passe</label>
+          <label for="password">Password</label>
           <input
+            required
             type="password"
-            name="Name"
-            id="name"
-            class="border-2 border-purple-200 text-xl focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+            name="password"
+            id="password"
+            v-model="password"
+            class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1 w-full">
+          <label for="confirmedPassword">Confirmer le mot de passe</label>
+          <input
+            required
+            type="password"
+            name="confirmedPassword"
+            id="confirmedPassword"
+            v-model="confirmedPassword"
+            class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
         <div class="flex justify-center mt-4 w-full">

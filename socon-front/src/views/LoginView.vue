@@ -1,42 +1,74 @@
 <script setup>
+import { ref, warn } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import logo from '@/components/icons/logo.svg';
+import { supabase } from '@/lib/supabaseClient';
+import router from '@/router';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
+
+const store = useMemberStore();
+const { logging } = storeToRefs(store);
+logging.value = true;
+
+const email = ref(null);
+const password = ref(null);
+
+const handleConnect = async () => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: email.value,
+    password: password.value,
+  });
+  if (error) {
+    warn('Error not signed in');
+    throw error;
+  } else {
+    warn('Signed in succesfully!');
+    router.push('/');
+  }
+};
 </script>
 
 <template>
-  <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
-    <div class="bg-white py-8 rounded-2xl flex flex-col gap-4 px-2 lg:w-[35%]">
+  <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7 px-2">
+    <div class="bg-white py-8 rounded-xl flex flex-col gap-4 px-2 md:w-[35%] w-full my-2">
       <div class="flex flex-col items-center">
         <img :src="logo" alt="Logo" class="size-12 object-contain" />
         <h1 class="text-balance text-gray-400">Bon retour sur Soul Connect</h1>
       </div>
-      <form action="" class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full">
+      <form
+        action=""
+        class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full"
+        @submit.prevent="handleConnect"
+      >
         <div class="flex flex-col gap-1 w-full">
-          <label for="name">Name</label>
+          <label for="email">Name</label>
           <input
-            type="text"
-            name="Name"
-            id="name"
-            class="border-2 border-purple-200 text-xl focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+            required
+            type="email"
+            name="email"
+            id="email"
+            v-model="email"
+            class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
         <div class="flex flex-col gap-1 w-full">
-          <label for="name">Password</label>
+          <label for="password">Password</label>
           <input
-            type="text"
-            name="Name"
-            id="name"
-            class="border-2 border-purple-200 text-xl focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+            type="password"
+            name="password"
+            id="password"
+            v-model="password"
+            class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
         <div class="flex justify-center mt-4 w-full">
-          <BaseButton variant="primary"><span>Se connecter</span></BaseButton
-          >
+          <BaseButton variant="primary"><span>Se connecter</span></BaseButton>
         </div>
       </form>
       <div class="text-sm items-center text-center mx-auto">
         Vous n'avez pas de compte ?
-        <RouterLink to="/SignUp" class="text-purple-600 font-bold">Incrivez-vous</RouterLink>
+        <RouterLink to="/signup" class="text-purple-600 font-bold">Incrivez-vous</RouterLink>
       </div>
     </div>
   </div>

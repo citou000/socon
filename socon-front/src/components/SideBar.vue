@@ -46,7 +46,8 @@ const editMember = () => {
           <span class="font-semibold text-gray-600">Quartier:</span> {{ member.neighborhood }}
         </p>
         <p class="font-bold flex justify-between">
-          <span class="font-semibold text-gray-600">Groupe:</span> {{ member.group }}
+          <span class="font-semibold text-gray-600">Contact</span>
+          <a :href="`tel: ${member.contact}`">{{ member.contact }}</a>
         </p>
         <p class="font-bold flex justify-between items-center">
           <span class="font-semibold text-gray-600">Prière du salut:</span>
