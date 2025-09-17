@@ -2,36 +2,68 @@
 import BaseButton from '@/components/BaseButton.vue';
 import logo from '@/components/icons/logo.svg';
 import { supabase } from '@/lib/supabaseClient';
-import { ref, warn } from 'vue';
+import { ref } from 'vue';
 import { useMemberStore } from '@/store/member';
 import { storeToRefs } from 'pinia';
 import router from '@/router';
+import { useToast } from 'vue-toastification';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
 const store = useMemberStore();
 const { logging } = storeToRefs(store);
+const toast = useToast();
 logging.value = true;
+const loading = ref(false);
 
-const email = ref(null);
-const password = ref(null);
-const confirmedPassword = ref(null);
-const name = ref(null);
+const email = ref('');
+const password = ref('');
+const confirmedPassword = ref('');
+const name = ref('');
 
 const handleConnect = async () => {
-  if (password.value !== confirmedPassword.value) {
-    console.log('Passwords do not match');
-    alert('Passwords do not match');
+  if (!email.value || !password.value || !confirmedPassword.value || !name.value) {
+    toast.error('All fields are required');
     return;
-  } else {
+  }
+
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!regex.test(email.value)) {
+    toast.error('Invalid email address');
+    return;
+  }
+
+  if (password.value !== confirmedPassword.value) {
+    toast.error('Passwords do not match');
+    return;
+  }
+
+  if (password.value.length < 8) {
+    toast.error('Password must be at least 8 characters long');
+    return;
+  }
+
+  try {
+    loading.value = true; // <- set loading BEFORE awaiting anything
     const { error: signupError } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
+      options: {
+        data: { name: name.value }, // save name in user metadata
+        emailRedirectTo: window.location.origin + '/confirmation',
+      },
     });
     if (signupError) {
-      throw signupError;
-    } else {
-      warn('Done');
-      router.push('/confirmation');
+      toast.error(signupError.message);
+      loading.value = false;
+      return;
     }
+    loading.value = false;
+    toast.success('Signup successful! Please check your email to confirm your account.');
+    router.push('/confirmation');
+  } catch (err) {
+    toast.error('Something went wrong. Please try again later.', err);
+    loading.value = false;
   }
 };
 </script>
@@ -44,7 +76,6 @@ const handleConnect = async () => {
         <h1 class="text-balance text-gray-400">Bienvenue sur Soul Connect</h1>
       </div>
       <form
-        action=""
         class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full"
         @submit.prevent="handleConnect"
       >
@@ -53,7 +84,6 @@ const handleConnect = async () => {
           <input
             required
             type="text"
-            name="Name"
             id="name"
             v-model="name"
             class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
@@ -64,7 +94,6 @@ const handleConnect = async () => {
           <input
             required
             type="email"
-            name="email"
             id="email"
             v-model="email"
             class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
@@ -75,7 +104,6 @@ const handleConnect = async () => {
           <input
             required
             type="password"
-            name="password"
             id="password"
             v-model="password"
             class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
@@ -87,18 +115,20 @@ const handleConnect = async () => {
           <input
             required
             type="password"
-            name="confirmedPassword"
             id="confirmedPassword"
             v-model="confirmedPassword"
             class="border-2 border-purple-200 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
         <div class="flex justify-center mt-4 w-full">
-          <BaseButton variant="primary"><span>Se connecter</span></BaseButton>
+          <BaseButton variant="primary" :disabled="loading">
+            <LoadingSpinner v-if="loading" size="sm" />
+            <span v-else>S'inscrire</span>
+          </BaseButton>
         </div>
       </form>
       <div class="text-sm items-center text-center mx-auto">
-        Vous avez dejà un compte ?
+        Vous avez déjà un compte ?
         <RouterLink to="/login" class="text-purple-600 font-bold">Connectez-vous</RouterLink>
       </div>
     </div>

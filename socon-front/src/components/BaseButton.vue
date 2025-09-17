@@ -24,6 +24,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const classes = {
@@ -49,24 +53,17 @@ const classes = {
 
 <template>
   <button
+    :disabled="props.disabled"
     :class="[
-      'px-2',
-      'py-2',
+      'px-2 py-2 font-semibold transition-colors duration-300 flex items-center justify-center gap-2',
       props.rounded ? 'rounded-full' : 'rounded-md',
-      'font-semibold',
-      'cursor-pointer',
-      'transition-colors',
-      'duration-300',
-      'flex',
-      'items-center',
-      'justify-center',
-      'gap-2',
       props.width ? 'w-full' : 'w-fit',
       classes[props.variant].bg,
       classes[props.variant].hover,
       classes[props.variant].text,
       classes[props.variant].border,
       props.margin ? 'mt-2' : '',
+      props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
     ]"
     @click="$emit('event')"
   >
