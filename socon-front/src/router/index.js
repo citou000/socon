@@ -21,7 +21,7 @@ router.beforeEach((to, from, next) => {
   const { user } = useAuth();
   console.log('User', user.value);
 
-  if (to.meta.requiresAuth && !user.value) return next('/login');
+  if (to.meta.requiresAuth && !user.value) return next('/signup');
   if (to.path === '/login' && user.value) return next('/');
   next();
 });
