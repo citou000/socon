@@ -38,9 +38,9 @@ const classes = {
     text: 'text-gray-800',
     border: 'border border-gray-300',
   },
-  no_border: {
+  tertiary: {
     bg: 'bg-transparent',
-    hover: 'hover:bg-gray-300',
+    hover: 'hover:text-gray-600',
     text: 'text-gray-800',
     border: '',
   },

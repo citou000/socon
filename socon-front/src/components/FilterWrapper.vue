@@ -1,21 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 // import { Search, ListFilter } from 'lucide-vue-next'
 // import BaseButton from '@/components/BaseButton.vue'
 
-const tabs = ref('all')
+const tabs = ref('all');
 
 const tabOptions = [
   { label: 'Tous', key: 'all' },
   { label: 'Par mentor', key: 'mentor' },
   { label: 'Par salut', key: 'salvation' },
-]
+];
 
-const emit = defineEmits(['tab-clicked'])
+const emit = defineEmits(['tab-clicked']);
 
 function changeTab(key) {
-  tabs.value = key
-  emit('tab-clicked', key)
+  tabs.value = key;
+  emit('tab-clicked', key);
 }
 </script>
 
@@ -42,10 +42,10 @@ function changeTab(key) {
 
     <!-- Action Buttons -->
     <!-- <div class="flex gap-2">
-      <BaseButton variant="no_border" :squared="true">
+      <BaseButton variant="tertiary" :squared="true">
         <ListFilter />
       </BaseButton>
-      <BaseButton variant="no_border" :squared="true">
+      <BaseButton variant="tertiary" :squared="true">
         <Search />
       </BaseButton>
     </div> -->

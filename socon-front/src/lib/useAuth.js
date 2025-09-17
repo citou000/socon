@@ -21,6 +21,7 @@ export async function validateUserSession() {
     return data.session.user;
   } catch (err) {
     clearUserData();
+    console.log('Error', err);
     return null;
   }
 }

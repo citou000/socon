@@ -158,7 +158,7 @@ const handleTab = (key) => {
       <DataTable @column-click="handleColumnClick" />
       <BaseButton
         v-if="!isAll"
-        variant="no_border"
+        variant="tertiary"
         :width="false"
         :rounded="true"
         :margin="true"

@@ -60,7 +60,7 @@ const close = () => {
       </div>
       <div class="flex justify-end gap-4 mt-4">
         <BaseButton variant="primary" @click="handleSubmission">Soumettre</BaseButton>
-        <BaseButton @click="close" variant="no_border">Annuler</BaseButton>
+        <BaseButton @click="close" variant="tertiary">Annuler</BaseButton>
       </div>
     </div>
   </div>

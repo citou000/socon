@@ -32,6 +32,7 @@ const handleConnect = async () => {
 
 <template>
   <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
+    <p>error</p>
     <div class="bg-white rounded-xl flex flex-col gap-4 md:w-[35%] w-[90%] px-2 mx-4 py-4">
       <div class="flex flex-col items-center">
         <img :src="logo" alt="Logo" class="size-12 object-contain" />
