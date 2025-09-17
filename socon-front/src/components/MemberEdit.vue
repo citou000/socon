@@ -86,7 +86,7 @@ const close = () => {
       </div>
 
       <div class="flex justify-end gap-4 mt-6">
-        <BaseButton variant="no_border" @click="close">Annuler</BaseButton>
+        <BaseButton variant="tertiary" @click="close">Annuler</BaseButton>
         <BaseButton variant="primary" @click="handleSave"> Enregistrer </BaseButton>
       </div>
     </div>

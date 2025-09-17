@@ -10,6 +10,12 @@ import FilterWrapper from '@/components/FilterWrapper.vue';
 import { useMemberStore } from '@/store/member';
 import { storeToRefs } from 'pinia';
 import BaseButton from '@/components/BaseButton.vue';
+import { supabase } from '@/lib/supabaseClient';
+
+const sessions = async () => {
+  const { data } = await supabase.auth.getSession();
+  console.log(data.session);
+};
 
 const store = useMemberStore();
 
@@ -71,6 +77,7 @@ onMounted(() => {
     startAutoSlide();
   }
   store.loadMembers();
+  sessions();
 });
 
 onBeforeUnmount(() => {
@@ -151,7 +158,7 @@ const handleTab = (key) => {
       <DataTable @column-click="handleColumnClick" />
       <BaseButton
         v-if="!isAll"
-        variant="no_border"
+        variant="tertiary"
         :width="false"
         :rounded="true"
         :margin="true"

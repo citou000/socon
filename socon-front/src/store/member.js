@@ -11,6 +11,7 @@ export const useMemberStore = defineStore('member', () => {
   const isAll = ref(false);
   const details = ref();
   const inc = 15;
+  const logging = ref(false);
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
 
@@ -168,5 +169,6 @@ export const useMemberStore = defineStore('member', () => {
     isAll,
     limit,
     handleReporting,
+    logging,
   };
 });
