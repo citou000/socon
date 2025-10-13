@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
-import logo from '@/components/icons/logo.svg';
+import logo from '@/assets/logo.svg';
 import { supabase } from '@/lib/supabaseClient';
 import router from '@/router';
 import { useMemberStore } from '@/store/member';

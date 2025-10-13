@@ -18,15 +18,15 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to,from, next) => {
   const auth = useAuth();
 
   const { user } = storeToRefs(auth);
   console.log('User', user.value);
 
   if (to.meta.requiresAuth && !user.value) return next('/signup');
-  // if (to.path === '/signup' && user.value) return next('/');
-  // if (to.path === '/login' && user.value) return next('/');
+  if (to.path === '/signup' && user.value) return next('/');
+  if (to.path === '/login' && user.value) return next('/');
   next();
 });
 
