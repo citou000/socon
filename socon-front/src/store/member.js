@@ -20,19 +20,31 @@ export const useMemberStore = defineStore('member', () => {
     error.value = null;
     try {
       const { data } = await supabase.from('souls').select(`*`).order('id', { ascending: true });
-      const { data: detail } = await supabase
-        .from('details')
+      const { data: detailsData, error: detailsError } = await supabase
+        .from('detail')
         .select('details, soul_id')
         .order(`soul_id`, { ascending: true });
       allMembers.value = data;
-      details.value = detail;
+      details.value = detailsData;
 
-      const sample = details.value.map((m) => {
-        return JSON.parse(m.details);
+      console.table('Details', details.value);
+
+      // const sample = details.value.map((m) => {
+      //   console.log("samples",m.details);
+      //   return JSON.parse(m.details);
+      // });
+      // console.log('Details', sample);
+      const detailMap = Object.fromEntries(
+        (detailsData || []).map(m => [m.soul_id, m.details || {}])
+      );
+      console.log('Details', detailMap);
+      allMembers.value = allMembers.value.map((m) => {
+        console.log('Details', detailMap[m.id], '\nSoul id', m, '\nID', m.id);
+        return {
+          ...m,
+          details: detailMap[m.id] || {},
+        };
       });
-      console.log('Details', sample);
-      const detailMap = Object.fromEntries(detail.map((d) => [d.soul_id, JSON.parse(d.details)]));
-      allMembers.value = allMembers.value.map((m) => ({ ...m, details: detailMap[m.id] || {} }));
       console.log('Loaded members:', allMembers.value);
     } catch (err) {
       error.value = err.message;
