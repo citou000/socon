@@ -13,7 +13,7 @@ const routes = [
   { path: '/signup', component: SignUpView, meta: { public: true } },
   { path: '/login', component: LoginView, meta: { public: true } },
   { path: '/not-found', component: NotFoundView, meta: { public: true } },
-  { path: '/mentor/dashboard', component: MentorDashboardView, meta: { requiresAuth: true } },
+  { path: '/', component: MentorDashboardView, meta: { requiresAuth: true } },
   { path: '/admin/dashboard', component: DashboardView, meta: { requiresAuth: true } },
   { path: '/:pathMatch(.*)*', redirect: '/not-found' },
 ];
@@ -27,11 +27,13 @@ router.beforeEach((to, from, next) => {
   const auth = useAuth();
 
   const { user } = storeToRefs(auth);
-  console.log('User', user.value);
+  console.log('User', user.value?.user_metadata?.role);
 
   if (to.meta.requiresAuth && !user.value) return next('/login');
   if (to.path === '/signup' && user.value) return next('/');
   if (to.path === '/login' && user.value) return next('/');
+  if (to.path === '/' && user.value?.user_metadata.role === 'admin')
+    return next('/admin/dashboard');
   if (to.path === '/confirmation' && !localStorage.getItem('pendingEmail'))
     return next('/not-found');
   next();

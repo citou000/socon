@@ -23,7 +23,7 @@ const sessions = async () => {
 
 const store = useMemberStore();
 
-const { stats, keys, isAll, limit, isLoading } = storeToRefs(store);
+const { stats, keys, isAll, limit, isLoading, hasMember } = storeToRefs(store);
 
 let intervalId = null;
 
@@ -199,6 +199,9 @@ const handleTab = (key) => {
 
     <div v-if="isLoading" class="flex justify-center items-center p-8">
       <LoadingSpinner size="lg" />
+    </div>
+    <div v-else-if="!hasMember">
+      <p class="text-gray-500 text-xl mt-10">Aucun membre trouvé.</p>
     </div>
     <div
       v-else

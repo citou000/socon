@@ -9,11 +9,22 @@ export const useMemberStore = defineStore('member', () => {
   const error = ref(null);
   const selectedMember = ref(null);
   const limit = ref(25);
-  const isAll = ref(false);
   const details = ref();
   const inc = 15;
   const logging = ref(false);
   const hasMember = computed(() => allMembers.value.length > 0);
+
+  const remainingCount = computed(() => {
+    return Math.max(allMembers.value.length - limit.value, 0);
+  });
+
+  // Corrected isAll logic
+  const isAll = computed(() => {
+    // No members at all => disable showMore
+    if (!hasMember.value) return true;
+    // No more remaining => disable showMore
+    return remainingCount.value === 0;
+  });
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
 
@@ -173,11 +184,9 @@ export const useMemberStore = defineStore('member', () => {
   });
 
   const showMore = () => {
-    const remaining = allMembers.value.length - limit.value;
-    if (remaining <= 0) {
-      isAll.value = true;
-      return;
-    }
+    const remaining = remainingCount.value;
+    if (remaining <= 0) return; // nothing to show
+
     limit.value += Math.min(inc, remaining);
   };
 

@@ -92,7 +92,9 @@ const handleTab = (key) => {
     <div v-if="isLoading" class="flex justify-center items-center p-8">
       <LoadingSpinner size="lg" />
     </div>
-
+    <div v-else-if="!hasMember" class="flex justify-center items-center p-8 mx-auto">
+      <p class="text-gray-500 text-xl mt-10">Aucun membre trouvé.</p>
+    </div>
     <div
       v-else
       class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center"
