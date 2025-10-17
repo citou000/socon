@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { supabase } from '@/lib/supabaseClient';
+import { useToast } from 'vue-toastification';
 
 export const useMemberStore = defineStore('member', () => {
   const allMembers = ref([]);
@@ -12,28 +13,52 @@ export const useMemberStore = defineStore('member', () => {
   const details = ref();
   const inc = 15;
   const logging = ref(false);
+  const hasMember = computed(() => allMembers.value.length > 0);
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
+
+  const toast = useToast();
 
   const loadMembers = async () => {
     isLoading.value = true;
     error.value = null;
-    try {
-      const { data } = await supabase.from('souls').select(`*`).order('id', { ascending: true });
-      const { data: detail } = await supabase
-        .from('details')
-        .select('details, soul_id')
-        .order(`soul_id`, { ascending: true });
-      allMembers.value = data;
-      details.value = detail;
+    const { data: userSession, error: userError } = await supabase.auth.getSession();
+    if (userError) {
+      toast.error('Impossible de trouver des informations utilisateurs');
+      throw new Error('Impossible de trouver des informations utilisateurs');
+    }
 
-      const sample = details.value.map((m) => {
-        return JSON.parse(m.details);
+    const uuid = userSession.session.user.id;
+    // console.log('UUID:', uuid);
+
+    try {
+      const { data } = await supabase
+        .from('souls')
+        .select()
+        .eq('admin_id', uuid)
+        .order('id', { ascending: true });
+      const soulIds = data.map((s) => s.id);
+      const { data: detailsData, error: detailsError } = await supabase
+        .from('detail')
+        .select('details, soul_id')
+        .in('soul_id', soulIds)
+        .order(`soul_id`, { ascending: true });
+      if (detailsError) {
+        throw detailsError;
+      }
+      allMembers.value = data;
+      details.value = detailsData;
+      const detailMap = Object.fromEntries(
+        (detailsData || []).map((d) => [d.soul_id, d.details || {}]),
+      );
+      console.log('Details', detailMap);
+      allMembers.value = allMembers.value.map((soul) => {
+        return {
+          ...soul,
+          details: detailMap[soul.id] || {},
+        };
       });
-      console.log('Details', sample);
-      const detailMap = Object.fromEntries(detail.map((d) => [d.soul_id, JSON.parse(d.details)]));
-      allMembers.value = allMembers.value.map((m) => ({ ...m, details: detailMap[m.id] || {} }));
-      console.log('Loaded members:', allMembers.value);
+      // console.log('Loaded members:', allMembers.value);
     } catch (err) {
       error.value = err.message;
       console.error('Fetch error:', err);
@@ -70,13 +95,13 @@ export const useMemberStore = defineStore('member', () => {
     const updated = data[0]; // the updated row
 
     const { data: detailData, error: detailError } = await supabase
-      .from('details')
+      .from('detail')
       .select('details')
       .eq('soul_id', id)
       .single();
     if (detailError && detailError.code !== 'PGRST116') throw detailError; // ignore not found
 
-    updated.details = detailData ? JSON.parse(detailData.details) : {};
+    updated.details = detailData?.details || {};
 
     // update local list
     const index = allMembers.value.findIndex((m) => m.id === id);
@@ -94,14 +119,14 @@ export const useMemberStore = defineStore('member', () => {
   const handleReporting = async (id, updates) => {
     // 1️⃣ Fetch current details from Supabase
     const { data, error } = await supabase
-      .from('details')
+      .from('detail')
       .select('details')
       .eq('soul_id', id)
       .single();
     if (error && error.code !== 'PGRST116') throw error;
 
     // 2️⃣ Parse current details and add the new report
-    const details = data && data.details ? JSON.parse(data.details) : {};
+    const details = data?.details || {};
     const today = new Date().toLocaleDateString('fr-FR');
     if (details[today]) {
       // If entry exists for today, add new update with proper spacing
@@ -113,11 +138,13 @@ export const useMemberStore = defineStore('member', () => {
 
     // 3️⃣ Update Supabase
     const { error: updateError } = await supabase
-      .from('details')
-      .update({ details: JSON.stringify(details) })
-      .eq('soul_id', id)
+      .from('detail')
+      .upsert({ soul_id: id, details })
       .select();
-    if (updateError) throw updateError;
+    if (updateError) {
+      toast.error('Mise à jour échoué!');
+      throw updateError;
+    }
 
     // 4️⃣ Update local store so UI updates immediately
     const index = allMembers.value.findIndex((m) => m.id === id);
@@ -170,5 +197,6 @@ export const useMemberStore = defineStore('member', () => {
     limit,
     handleReporting,
     logging,
+    hasMember,
   };
 });

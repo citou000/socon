@@ -1,11 +1,11 @@
 <script setup>
-import logo from '@/components/icons/logo.svg'
-import { useRoute } from 'vue-router'
+import logo from '@/assets/logo.';
+import { useRoute } from 'vue-router';
 
 const isActive = (routePath) => {
-  const route = useRoute()
-  return route.path === routePath
-}
+  const route = useRoute();
+  return route.path === routePath;
+};
 </script>
 <template>
   <nav class="flex items-center justify-between p-4 bg-white rounded-xl">

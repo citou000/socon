@@ -11,6 +11,10 @@ import { useMemberStore } from '@/store/member';
 import { storeToRefs } from 'pinia';
 import BaseButton from '@/components/BaseButton.vue';
 import { supabase } from '@/lib/supabaseClient';
+import logo from '@/assets/logo.svg';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const sessions = async () => {
   const { data } = await supabase.auth.getSession();
@@ -34,6 +38,7 @@ const isSidebarOpen = ref(false);
 const selectedMember = store.selectedMember;
 const isReporting = ref(false);
 const isEditing = ref(false);
+const profileMenu = ref(false);
 
 const handleColumnClick = () => {
   isSidebarOpen.value = true;
@@ -49,6 +54,18 @@ const handleSubmission = () => {
 
 const handleMemberEditing = () => {
   isEditing.value = true;
+};
+
+const loggingOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    toast.error('Erreur de déconnexion');
+    return;
+  }
+  const session = await supabase.auth.getUser();
+  console.log(session);
+  window.location.href = '/login';
+  toast.success('Déconnecter avec succès');
 };
 
 const move = (direction) => {
@@ -100,6 +117,36 @@ const handleTab = (key) => {
 </script>
 
 <template>
+  <nav class="px-4 py-3 flex justify-between items-center">
+    <RouterLink to="/"
+      ><div class="size-14">
+        <img :src="logo" alt="logo" /></div
+    ></RouterLink>
+    <div
+      class="size-14 bg-gray-300 rounded-full cursor-pointer"
+      @click="profileMenu = !profileMenu"
+    ></div>
+    <div class="absolute bg-white right-3 top-25 p-2 rounded-xl z-100" v-if="profileMenu">
+      <ul class="flex flex-col gap-2 w-fit">
+        <li
+          class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
+        >
+          Paramètre de l'organisation
+        </li>
+        <li
+          class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
+        >
+          Mon Profil
+        </li>
+        <li
+          class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
+          @click="loggingOut"
+        >
+          Se déconnecter
+        </li>
+      </ul>
+    </div>
+  </nav>
   <main class="min-h-screen flex flex-col gap-4">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto relative flex flex-col items-center">
