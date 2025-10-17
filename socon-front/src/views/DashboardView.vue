@@ -128,11 +128,13 @@ const handleTab = (key) => {
     ></div>
     <div class="absolute bg-white right-3 top-25 p-2 rounded-xl z-100" v-if="profileMenu">
       <ul class="flex flex-col gap-2 w-fit">
-        <li
-          class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
-        >
-          Paramètre de l'organisation
-        </li>
+        <RouterLink to="/profile">
+          <li
+            class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
+          >
+            Paramètre de l'organisation
+          </li>
+        </RouterLink>
         <li
           class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
         >

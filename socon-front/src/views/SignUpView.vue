@@ -64,6 +64,7 @@ const handleConnect = async () => {
     }
     loading.value = false;
     toast.success('Signup successful! Please check your email to confirm your account.');
+    localStorage.setItem('pendingEmail', true);
     router.push('/confirmation');
   } catch (err) {
     toast.error('Something went wrong. Please try again later.', err);
