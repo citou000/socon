@@ -24,7 +24,7 @@ router.beforeEach((to,from, next) => {
   const { user } = storeToRefs(auth);
   console.log('User', user.value);
 
-  if (to.meta.requiresAuth && !user.value) return next('/signup');
+  if (to.meta.requiresAuth && !user.value) return next('/login');
   if (to.path === '/signup' && user.value) return next('/');
   if (to.path === '/login' && user.value) return next('/');
   next();

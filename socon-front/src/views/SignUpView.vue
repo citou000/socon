@@ -19,6 +19,7 @@ const email = ref('');
 const password = ref('');
 const confirmedPassword = ref('');
 const name = ref('');
+const role = ref('mentor');
 
 const handleConnect = async () => {
   if (!email.value || !password.value || !confirmedPassword.value || !name.value) {
@@ -44,12 +45,15 @@ const handleConnect = async () => {
   }
 
   try {
-    loading.value = true; // <- set loading BEFORE awaiting anything
+    loading.value = true;
     const { error: signupError } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
       options: {
-        data: { name: name.value }, // save name in user metadata
+        data: {
+          name: name.value,
+          role: role.value,
+        },
         emailRedirectTo: window.location.origin + '/confirmation',
       },
     });
@@ -122,6 +126,19 @@ const handleConnect = async () => {
             class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
+
+        <div class="flex flex-col gap-1 w-full">
+          <label for="role">Rôle</label>
+          <select
+            id="role"
+            v-model="role"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+          >
+            <option value="admin">Admin</option>
+            <option value="mentor">Mentor</option>
+          </select>
+        </div>
+
         <div class="flex justify-center mt-4 w-full">
           <BaseButton
             variant="primary"
