@@ -77,6 +77,7 @@ const handleConnect = async () => {
 
 <template>
   <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
+
     <div
       class="bg-white py-8 flex flex-col gap-4 px-2 md:w-md md:h-auto size-full md:text-base md:rounded-2xl text-sm relative justify-center"
     >

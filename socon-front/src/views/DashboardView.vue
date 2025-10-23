@@ -64,7 +64,7 @@ const loggingOut = async () => {
   }
   const session = await supabase.auth.getUser();
   console.log(session);
-  window.location.href = '/login';
+  window.location.href = '/';
   toast.success('Déconnecter avec succès');
 };
 
