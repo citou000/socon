@@ -20,6 +20,7 @@ const password = ref('');
 const confirmedPassword = ref('');
 const name = ref('');
 const role = ref('mentor');
+const admin_id = ref('');
 
 const handleConnect = async () => {
   if (!email.value || !password.value || !confirmedPassword.value || !name.value) {
@@ -53,6 +54,7 @@ const handleConnect = async () => {
         data: {
           name: name.value,
           role: role.value,
+          admin_id:admin_id.value,
         },
         emailRedirectTo: window.location.origin + '/confirmation',
       },
