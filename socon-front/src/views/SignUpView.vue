@@ -20,7 +20,6 @@ const password = ref('');
 const confirmedPassword = ref('');
 const name = ref('');
 const role = ref('mentor');
-const admin_id = ref('');
 
 const handleConnect = async () => {
   if (!email.value || !password.value || !confirmedPassword.value || !name.value) {
@@ -54,7 +53,6 @@ const handleConnect = async () => {
         data: {
           name: name.value,
           role: role.value,
-          admin_id:admin_id.value,
         },
         emailRedirectTo: window.location.origin + '/confirmation',
       },
@@ -77,7 +75,6 @@ const handleConnect = async () => {
 
 <template>
   <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
-
     <div
       class="bg-white py-8 flex flex-col gap-4 px-2 md:w-md md:h-auto size-full md:text-base md:rounded-2xl text-sm relative justify-center"
     >
@@ -141,6 +138,16 @@ const handleConnect = async () => {
             <option value="admin">Admin</option>
             <option value="mentor">Mentor</option>
           </select>
+        </div>
+        <div class="flex flex-col gap-1 w-full" v-if="role === 'mentor'">
+          <label for="accessCode">Code d'accès à une organisation</label>
+          <input
+            required
+            type="text"
+            id="accessCode"
+            v-model="accessCode"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
+          />
         </div>
 
         <div class="flex justify-center mt-4 w-full">

@@ -32,8 +32,8 @@ const props = defineProps({
 
 const classes = {
   primary: {
-    bg: 'bg-purple-600',
-    hover: 'hover:bg-purple-700',
+    bg: 'bg-purple-700',
+    hover: 'hover:bg-purple-800',
     text: 'text-white',
   },
   secondary: {

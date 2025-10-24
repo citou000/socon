@@ -13,6 +13,8 @@ import BaseButton from '@/components/BaseButton.vue';
 import { supabase } from '@/lib/supabaseClient';
 import logo from '@/assets/logo.svg';
 import { useToast } from 'vue-toastification';
+import { Plus } from 'lucide-vue-next';
+import router from '@/router';
 
 const toast = useToast();
 
@@ -64,7 +66,7 @@ const loggingOut = async () => {
   }
   const session = await supabase.auth.getUser();
   console.log(session);
-  window.location.href = '/';
+  router.push('/login');
   toast.success('Déconnecter avec succès');
 };
 
@@ -122,10 +124,26 @@ const handleTab = (key) => {
       ><div class="size-14">
         <img :src="logo" alt="logo" /></div
     ></RouterLink>
-    <div
-      class="size-14 bg-gray-300 rounded-full cursor-pointer"
-      @click="profileMenu = !profileMenu"
-    ></div>
+    <div class="flex items-center gap-8 justify-center w-fit">
+      <div>
+      <BaseButton variant="primary" @click="isEditing = true">
+        <Plus />
+        Ajouter une âme
+      </BaseButton>
+    </div>
+    <div class="flex items-center gap-8 justify-center w-fit">
+      <div
+        class="size-12 bg-gray-300 rounded-full cursor-pointer"
+        @click="profileMenu = !profileMenu"
+      >
+        <img
+          src="https://api.dicebear.com/9.x/pixel-art/svg"
+          alt="avatar"
+          class="w-full h-full object-cover rounded-full"
+        />
+      </div>
+    </div>
+    </div>
     <div class="absolute bg-white right-3 top-25 p-2 rounded-xl z-100" v-if="profileMenu">
       <ul class="flex flex-col gap-2 w-fit">
         <RouterLink to="/profile">
@@ -200,8 +218,8 @@ const handleTab = (key) => {
     <div v-if="isLoading" class="flex justify-center items-center p-8">
       <LoadingSpinner size="lg" />
     </div>
-    <div v-else-if="!hasMember">
-      <p class="text-gray-500 text-xl mt-10">Aucun membre trouvé.</p>
+    <div v-else-if="!hasMember" class="flex items-center justify-center mt-10">
+      <p class="text-gray-500 text-xl">Aucun membre trouvé.</p>
     </div>
     <div
       v-else
@@ -212,7 +230,7 @@ const handleTab = (key) => {
         v-if="!isAll"
         variant="tertiary"
         :width="false"
-        :rounded="true"
+        :rounded="false"
         :margin="true"
         class="text-purple-900 hover:text-purple-800"
         @click="store.showMore(limit)"

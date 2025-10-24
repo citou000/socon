@@ -212,7 +212,6 @@ const handleTab = (key) => {
         v-if="!isAll"
         variant="tertiary"
         :width="false"
-        :rounded="true"
         :margin="true"
         class="text-purple-900 hover:text-purple-800"
         @click="store.showMore(limit)"
