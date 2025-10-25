@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useToast } from 'vue-toastification';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import BaseButton from '@/components/BaseButton.vue';
-import { Users, Search, Plus } from 'lucide-vue-next';
+import { Users, Plus } from 'lucide-vue-next';
 
 const teams = ref([]);
 const loading = ref(false);
