@@ -70,13 +70,9 @@ async function createTeam() {
       return;
     }
 
-    showCreate.value = false;
-
     const payload = {
       name: newTeamName.value.trim(),
       owner: userId,
-      // optional fields depending on your schema
-      members_count: 0,
     };
 
     const { data, error } = await supabase.from('teams').insert(payload).select().single();
@@ -119,8 +115,10 @@ onMounted(() => {
             />
           </div>
           <div class="flex justify-end gap-3 mt-6">
-            <BaseButton variant="secondary" @click="showCreate = false"> Annuler </BaseButton>
-            <BaseButton variant="primary" @click="createTeam"> Créer </BaseButton>
+            <BaseButton variant="secondary" @click="showCreate = false" type="button">
+              Annuler
+            </BaseButton>
+            <BaseButton variant="primary" type="submit"> Créer </BaseButton>
           </div>
         </form>
       </div>
@@ -129,17 +127,6 @@ onMounted(() => {
       <div class="max-w-7xl mx-auto px-4">
         <div class="flex items-center justify-between w-full mt-30 mb-10">
           <h1 class="text-3xl font-semibold">Équipes</h1>
-        </div>
-        <div class="mt-4 flex items-center justify-end gap-2 w-full">
-          <div class="relative flex-1 justify-end">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Rechercher une équipe..."
-              class="pl-10 pr-4 py-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white/80 backdrop-blur"
-            />
-            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500" />
-          </div>
           <BaseButton variant="primary" :width="false" @click="showCreate = true">
             <Plus />
             Créer une équipe
@@ -183,36 +170,4 @@ onMounted(() => {
       </div>
     </div>
   </main>
-
-  <!-- Create Modal -->
-  <div
-    v-if="showCreate"
-    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50"
-  >
-    <div class="bg-white rounded-xl p-6 max-w-md w-full">
-      <h2 class="text-xl font-semibold text-purple-900 mb-4">Créer une nouvelle équipe</h2>
-
-      <div class="space-y-4">
-        <div>
-          <label for="team-name" class="block text-sm font-medium text-gray-700">
-            Nom de l'équipe
-          </label>
-          <input
-            id="team-name"
-            v-model="newTeamName"
-            type="text"
-            class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-purple-500"
-            placeholder="Entrez le nom de l'équipe"
-          />
-        </div>
-
-        <div class="flex justify-end gap-3 mt-6">
-          <BaseButton variant="secondary" @click="showCreate = false">
-            Annuler
-          </BaseButton>
-          <BaseButton variant="primary" @click="createTeam"> Créer </BaseButton>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
