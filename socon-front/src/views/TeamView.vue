@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref,watch,nextTick, onMounted } from 'vue';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from 'vue-toastification';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
@@ -12,6 +12,14 @@ const searchQuery = ref('');
 const showCreate = ref(false);
 const newTeamName = ref('');
 const toast = useToast();
+const teamNameInput = ref(null);
+
+watch(showCreate, async (value) => {
+  if (value) {
+    await nextTick();
+    teamNameInput.value?.focus();
+  }
+});
 
 async function getUserId() {
   const { data } = await supabase.auth.getSession();
@@ -108,11 +116,14 @@ onMounted(() => {
             <label for="organisation">Nom de l'équipe</label>
             <input
               id="organisation"
+              ref="teamNameInput"
               v-model="newTeamName"
               type="text"
-              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-purple-500"
+              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
               placeholder="Entrez le nom de l'équipe"
+              required
             />
+
           </div>
           <div class="flex justify-end gap-3 mt-6">
             <BaseButton variant="secondary" @click="showCreate = false" type="button">
@@ -126,7 +137,7 @@ onMounted(() => {
     <div class="text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto px-4">
         <div class="flex items-center justify-between w-full mt-30 mb-10">
-          <h1 class="text-3xl font-semibold">Équipes</h1>
+          <h1 class="text-5xl font-semibold">Équipes</h1>
           <BaseButton variant="primary" :width="false" @click="showCreate = true">
             <Plus />
             Créer une équipe
@@ -146,15 +157,14 @@ onMounted(() => {
         <p class="mt-1 text-gray-500">Commencez par créer une nouvelle équipe.</p>
       </div>
 
-      <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+      <div v-else class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 mt-6">
         <div
           v-for="team in teams"
           :key="team.id"
-          class="bg-white p-6 rounded-xl shadow-sm border border-purple-100 hover:border-purple-300 transition-all cursor-pointer"
+          class="bg-white p-6 rounded-xl shadow-sm border border-purple-100 hover:border-purple-300 transition-all cursor-pointer w-sm"
         >
-          <div class="flex items-center justify-between mb-3">
+          <div class="flex items-start justify-start mb-3 flex-col">
             <h3 class="text-lg font-semibold text-purple-900">{{ team.name }}</h3>
-            <span class="text-sm text-purple-500 font-medium">#{{ team.id }}</span>
           </div>
 
           <p class="mt-2 text-sm text-gray-600">
