@@ -1,10 +1,12 @@
 <script setup>
-import { ref,watch,nextTick, onMounted } from 'vue';
+import { ref, watch, nextTick, onMounted } from 'vue';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from 'vue-toastification';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import { Users, Plus } from 'lucide-vue-next';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
 
 const teams = ref([]);
 const loading = ref(false);
@@ -13,6 +15,10 @@ const showCreate = ref(false);
 const newTeamName = ref('');
 const toast = useToast();
 const teamNameInput = ref(null);
+
+const { teamId } = storeToRefs(useMemberStore);
+
+console.log(teamId);
 
 watch(showCreate, async (value) => {
   if (value) {
@@ -23,7 +29,7 @@ watch(showCreate, async (value) => {
 
 async function getUserId() {
   const { data } = await supabase.auth.getSession();
-  return data?.session?.user?.id || null;
+  return data?.session?.user || null;
 }
 
 async function fetchTeams() {
@@ -31,7 +37,8 @@ async function fetchTeams() {
   teams.value = [];
   try {
     const userId = await getUserId();
-    if (!userId) {
+    console.log(userId);
+    if (!userId.id) {
       toast.error('Utilisateur non connecté.');
       loading.value = false;
       return;
@@ -40,7 +47,7 @@ async function fetchTeams() {
     let query = supabase
       .from('teams')
       .select('*')
-      .eq('owner', userId)
+      .eq('owner', userId.id)
       .order('id', { ascending: false });
 
     if (searchQuery.value && searchQuery.value.trim() !== '') {
@@ -48,7 +55,7 @@ async function fetchTeams() {
       query = supabase
         .from('teams')
         .select('*')
-        .eq('owner', userId)
+        .eq('owner', userId.id)
         .ilike('name', `%${searchQuery.value.trim()}%`)
         .order('id', { ascending: false });
     }
@@ -56,6 +63,7 @@ async function fetchTeams() {
     const { data, error } = await query;
     if (error) throw error;
     teams.value = data || [];
+    console.log(teams.value);
   } catch (err) {
     console.error(err);
     toast.error('Erreur lors de la récupération des équipes.');
@@ -73,14 +81,14 @@ async function createTeam() {
   try {
     loading.value = true;
     const userId = await getUserId();
-    if (!userId) {
+    if (!userId.id) {
       toast.error('Utilisateur non connecté.');
       return;
     }
 
     const payload = {
       name: newTeamName.value.trim(),
-      owner: userId,
+      owner: userId.id,
     };
 
     const { data, error } = await supabase.from('teams').insert(payload).select().single();
@@ -98,6 +106,12 @@ async function createTeam() {
     loading.value = false;
   }
 }
+
+const setTeam = (teamId) => {
+  console.log('Set Team called successfully !');
+  localStorage.setItem('teamId', teamId);
+  console.log("Team Id:",localStorage.getItem('teamId'));
+};
 
 onMounted(() => {
   fetchTeams();
@@ -123,7 +137,6 @@ onMounted(() => {
               placeholder="Entrez le nom de l'équipe"
               required
             />
-
           </div>
           <div class="flex justify-end gap-3 mt-6">
             <BaseButton variant="secondary" @click="showCreate = false" type="button">
@@ -161,6 +174,7 @@ onMounted(() => {
         <div
           v-for="team in teams"
           :key="team.id"
+          @click="setTeam(team.id)"
           class="bg-white p-6 rounded-xl shadow-sm border border-purple-100 hover:border-purple-300 transition-all cursor-pointer w-sm"
         >
           <div class="flex items-start justify-start mb-3 flex-col">

@@ -13,10 +13,13 @@ export const useMemberStore = defineStore('member', () => {
   const inc = 15;
   const logging = ref(false);
   const hasMember = computed(() => allMembers.value.length > 0);
+  const teamId = ref(localStorage.getItem('teamId') || null);
 
   const remainingCount = computed(() => {
     return Math.max(allMembers.value.length - limit.value, 0);
   });
+
+  teamId.value = localStorage.getItem('teamId');
 
   // Corrected isAll logic
   const isAll = computed(() => {
@@ -207,5 +210,6 @@ export const useMemberStore = defineStore('member', () => {
     handleReporting,
     logging,
     hasMember,
+    teamId,
   };
 });
