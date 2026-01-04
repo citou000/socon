@@ -5,10 +5,13 @@ import { useToast } from 'vue-toastification';
 import { supabase } from '@/lib/supabaseClient';
 import BaseButton from '@/components/BaseButton.vue';
 import { Plus } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+
 const toast = useToast();
 const profileMenu = ref(false);
+const router = useRouter();
 
-const emit = defineEmits(['loading']);
+const emit = defineEmits(['loading','addSouls']);
 
 const loggingOut = async () => {
   profileMenu.value = false;
@@ -17,8 +20,8 @@ const loggingOut = async () => {
     toast.error('Erreur de déconnexion');
     return;
   }
-  window.location.href = '/login';
   toast.success('Déconnecter avec succès');
+  router.push('/login');
 };
 </script>
 <template>
@@ -28,7 +31,7 @@ const loggingOut = async () => {
         <img :src="logo" alt="logo" /></div
     ></RouterLink>
     <div class="flex items-center justify-between gap-5">
-      <BaseButton variant="primary">
+      <BaseButton variant="primary" @click="emit('addSouls')">
         <Plus />
         <span>Ajouter une âme</span>
       </BaseButton>

@@ -10,6 +10,7 @@ import { useMemberStore } from '@/store/member';
 import { storeToRefs } from 'pinia';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
+import addMember from '@/components/addMember.vue';
 
 const store = useMemberStore();
 
@@ -28,6 +29,7 @@ const isSidebarOpen = ref(false);
 const selectedMember = store.selectedMember;
 const isReporting = ref(false);
 const isEditing = ref(false);
+const isAdding = ref(false);
 
 const handleColumnClick = () => {
   isSidebarOpen.value = true;
@@ -87,7 +89,7 @@ watch(screenWidth, (newWidth, oldWidth) => {
 });
 </script>
 <template>
-  <NavBar />
+  <NavBar @addSouls="isAdding = true" />
   <main class="min-h-screen flex flex-col gap-4">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto relative flex flex-col items-center">
@@ -166,5 +168,6 @@ watch(screenWidth, (newWidth, oldWidth) => {
       @reportSubmission="handleSubmission"
     />
     <MemberEdit v-if="isEditing" @close="isEditing = false" />
+    <addMember v-if="isAdding" @close="isAdding = false" />
   </main>
 </template>

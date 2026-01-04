@@ -18,7 +18,6 @@ export const useMemberStore = defineStore('member', () => {
   });
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
-
   const toast = useToast();
 
   const loadMembers = async () => {
@@ -124,6 +123,17 @@ export const useMemberStore = defineStore('member', () => {
 
     return updated;
   };
+
+  const addMember = (update) => {
+    const { data, error } = supabase.from('souls').insert(update);
+    if (error) {
+      throw error;
+    }
+    const { detailData, detailError } = supabase
+      .from('details')
+      .insert({ id: data[0].id, details: [{}] });
+  };
+
   const handleReporting = async (id, updates) => {
     const { data, error } = await supabase.from('details').select('details').eq('id', id).single();
     if (error && error.code !== 'PGRST116') throw error;
