@@ -19,7 +19,6 @@ const email = ref('');
 const password = ref('');
 const confirmedPassword = ref('');
 const name = ref('');
-const role = ref('mentor');
 
 const handleConnect = async () => {
   if (!email.value || !password.value || !confirmedPassword.value || !name.value) {
@@ -52,9 +51,7 @@ const handleConnect = async () => {
       options: {
         data: {
           name: name.value,
-          role: role.value,
         },
-        emailRedirectTo: window.location.origin + '/confirmation',
       },
     });
     if (signupError) {
@@ -64,6 +61,7 @@ const handleConnect = async () => {
     }
     loading.value = false;
     toast.success('Signup successful! Please check your email to confirm your account.');
+    localStorage.setItem('pendingEmailVerification', email.value);
     router.push('/confirmation');
   } catch (err) {
     toast.error('Something went wrong. Please try again later.', err);
@@ -126,19 +124,6 @@ const handleConnect = async () => {
             class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
           />
         </div>
-
-        <div class="flex flex-col gap-1 w-full">
-          <label for="role">Rôle</label>
-          <select
-            id="role"
-            v-model="role"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          >
-            <option value="admin">Admin</option>
-            <option value="mentor">Mentor</option>
-          </select>
-        </div>
-
         <div class="flex justify-center mt-4 w-full">
           <BaseButton
             variant="primary"

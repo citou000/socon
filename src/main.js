@@ -21,14 +21,10 @@ app.use(pinia);
 
 async function bootstrap() {
   const auth = useAuth();
-  const { validateUserSession } = auth;
-  await validateUserSession();
-  // console.log('User after validation', auth.user);
-  // Use router and other plugins
   app.use(router);
   app.use(Toast, toastOptions);
-  // Mount the app
   app.mount('#app');
+  await auth.init();
 }
 
 bootstrap();

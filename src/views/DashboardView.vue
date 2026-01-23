@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import DataTable from '@/components/DataTable.vue';
 import Sidebar from '@/components/SideBar.vue';
 import ReportInput from '@/components/ReportInput.vue';
@@ -18,6 +18,8 @@ const { stats, keys, isAll, limit, isLoading, hasMember } = storeToRefs(store);
 
 let intervalId = null;
 
+
+const addMemberRef = ref(null);
 const currentIndex = ref(0);
 const screenWidth = ref(window.innerWidth);
 
@@ -67,6 +69,13 @@ function stopAutoSlide() {
   clearInterval(intervalId);
 }
 
+const openAddMember = async () => {
+  isAdding.value = true;
+  await nextTick();
+  addMemberRef.value?.setFocus();
+};
+
+
 onMounted(() => {
   window.addEventListener('resize', handleResize);
   if (screenWidth.value < 768) {
@@ -89,7 +98,7 @@ watch(screenWidth, (newWidth, oldWidth) => {
 });
 </script>
 <template>
-  <NavBar @addSouls="isAdding = true" />
+  <NavBar @addSouls="openAddMember" />
   <main class="min-h-screen flex flex-col gap-4">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto relative flex flex-col items-center">
@@ -168,6 +177,6 @@ watch(screenWidth, (newWidth, oldWidth) => {
       @reportSubmission="handleSubmission"
     />
     <MemberEdit v-if="isEditing" @close="isEditing = false" />
-    <addMember v-if="isAdding" @close="isAdding = false" />
+    <addMember v-if="isAdding" @close="isAdding = false" ref="addMemberRef" />
   </main>
 </template>

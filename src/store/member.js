@@ -17,6 +17,21 @@ export const useMemberStore = defineStore('member', () => {
     return allMembers.value.length > 0;
   });
 
+  const monthNames = [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ];
+
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
   const toast = useToast();
 
@@ -28,6 +43,8 @@ export const useMemberStore = defineStore('member', () => {
       toast.error('Impossible de trouver des informations utilisateurs');
       throw new Error('Impossible de trouver des informations utilisateurs');
     }
+
+    const { data: teams, error: teamsError } = await supabase.from('teams').select();
 
     const uuid = userSession.session.user.id;
     // console.log('UUID:', uuid);
@@ -139,6 +156,7 @@ export const useMemberStore = defineStore('member', () => {
     if (error && error.code !== 'PGRST116') throw error;
     const currentDetails = data?.details || [];
     const today = new Date().toLocaleDateString('fr-FR');
+    console.log('Today is:', today);
     //if (currentDetails[today]) {
     console.log('Already reporting today\n', currentDetails.value);
     console.log('Updates\n', updates);
@@ -211,5 +229,7 @@ export const useMemberStore = defineStore('member', () => {
     handleReporting,
     logging,
     hasMember,
+    monthNames,
+    addMember,
   };
 });

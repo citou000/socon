@@ -7,6 +7,8 @@ import { storeToRefs } from 'pinia';
 const { logging } = storeToRefs(useMemberStore);
 </script>
 <template>
-  <RouterView />
-  <FooterItem v-if="!logging" />
+  <div class="min-h-screen flex flex-col">
+    <RouterView />
+    <FooterItem v-if="!logging" />
+  </div>
 </template>
