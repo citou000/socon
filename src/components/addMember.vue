@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, defineExpose } from 'vue';
+import { ref, nextTick } from 'vue';
 import { X } from 'lucide-vue-next';
 import BaseButton from '@/components/BaseButton.vue';
 import { useMemberStore } from '@/store/member';

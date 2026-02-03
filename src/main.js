@@ -27,4 +27,4 @@ async function bootstrap() {
   await auth.init();
 }
 
-bootstrap();
+await bootstrap();
