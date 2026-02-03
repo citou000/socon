@@ -14,6 +14,13 @@ const inviteSharing = ref(false);
 const linkGenerated = ref(false);
 const inviteLink = ref('');
 
+const props = defineProps({
+  team: {
+    type: Boolean,
+    required: false,
+  },
+});
+
 const emit = defineEmits(['loading', 'addSouls']);
 
 const loggingOut = async () => {
@@ -56,12 +63,17 @@ const linkGeneration = () => {
 };
 </script>
 <template>
-  <nav class="px-4 py-3 flex justify-between items-center bg-purple-200">
+  <nav
+    :class="[
+      'px-4 py-3 flex justify-between items-center',
+      props.team ? 'bg-white border-b-1 border-purple-100' : 'bg-purple-200',
+    ]"
+  >
     <RouterLink to="/"
       ><div class="size-10">
         <img :src="logo" alt="logo" /></div
     ></RouterLink>
-    <div class="flex items-center justify-between gap-5">
+    <div v-if="!props.team" class="flex items-center justify-between gap-5">
       <BaseButton variant="primary" @click="emit('addSouls')">
         <Plus />
         <span>Ajouter une âme</span>

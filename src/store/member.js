@@ -44,10 +44,11 @@ export const useMemberStore = defineStore('member', () => {
       throw new Error('Impossible de trouver des informations utilisateurs');
     }
 
-    const { data: teams, error: teamsError } = await supabase.from('teams').select();
-
     const uuid = userSession.session.user.id;
     // console.log('UUID:', uuid);
+    try {
+      const { data: teams, error: teamsError } = await supabase.from('teams').select();
+    } catch {}
 
     try {
       const { data } = await supabase

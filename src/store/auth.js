@@ -41,7 +41,5 @@ export const useAuth = defineStore('auth', () => {
     user.value = session?.user ?? null;
     if (!session) clearUserData();
   });
-  init();
-
   return { user, init, initialized };
 });

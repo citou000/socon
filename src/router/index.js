@@ -12,8 +12,8 @@ const routes = [
   { path: '/confirmation', component: ConfirmationView },
   { path: '/signup', component: SignUpView },
   { path: '/login', component: LoginView },
-  { path: '/team', component: TeamView },
-  { path: '/', component: DashboardView, meta: { requiresAuth: true } },
+  { path: '/', component: TeamView, meta: { requiresAuth: true } },
+  { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
@@ -23,10 +23,11 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const auth = useAuth();
-
   const { user, initialized } = storeToRefs(auth);
 
-  console.log('User', user.value);
+  if (!initialized.value) {
+    await auth.init();
+  }
 
   if (to.meta.requiresAuth && !user.value) return next('/login');
   if (to.path === '/signup' && user.value) return next('/team');

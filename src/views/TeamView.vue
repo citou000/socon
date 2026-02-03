@@ -1,18 +1,21 @@
 <script setup>
+import { ref } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
 import { Search, Plus } from 'lucide-vue-next';
 import { supabase } from '@/lib/supabaseClient';
+
+const isEmpty = ref(true);
 </script>
 
 <template>
   <div class="h-full flex flex-col items-center flex-1">
     <section class="w-full">
-      <NavBar />
+      <NavBar :team="true" />
     </section>
 
     <section class="mt-12 w-full max-w-5xl px-6 h-full">
-      <h3 class="text-3xl font-bold mb-8">Vos équipes</h3>
+      <h2 class="text-5xl font-bold mb-8">Vos équipes</h2>
 
       <div class="flex items-center justify-between gap-4">
         <div
@@ -32,10 +35,15 @@ import { supabase } from '@/lib/supabaseClient';
         </BaseButton>
       </div>
 
-      <div
-        class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
-      >
-        La liste des équipes apparaîtra ici
+      <div>
+        <div
+          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
+          v-if="isEmpty"
+        >
+          Pas d'équipe pour le moment
+        </div>
+
+        <div v-else></div>
       </div>
     </section>
   </div>
