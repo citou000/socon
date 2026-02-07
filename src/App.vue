@@ -2,7 +2,7 @@
 import { RouterView } from 'vue-router';
 import FooterItem from '@/components/FooterItem.vue';
 import { useMemberStore } from './store/member';
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 
 const { logging } = storeToRefs(useMemberStore);
 </script>

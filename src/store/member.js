@@ -48,7 +48,9 @@ export const useMemberStore = defineStore('member', () => {
     // console.log('UUID:', uuid);
     try {
       const { data: teams, error: teamsError } = await supabase.from('teams').select();
-    } catch {}
+    } catch {
+
+    }
 
     try {
       const { data } = await supabase
