@@ -10,14 +10,13 @@ import { useMemberStore } from '@/store/member';
 import { storeToRefs } from 'pinia';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
-import addMember from '@/components/addMember.vue';
+import addMember from '@/components/AddMember.vue';
 
 const store = useMemberStore();
 
 const { stats, keys, isAll, limit, isLoading, hasMember } = storeToRefs(store);
 
 let intervalId = null;
-
 
 const addMemberRef = ref(null);
 const currentIndex = ref(0);
@@ -74,7 +73,6 @@ const openAddMember = async () => {
   await nextTick();
   addMemberRef.value?.setFocus();
 };
-
 
 onMounted(() => {
   window.addEventListener('resize', handleResize);

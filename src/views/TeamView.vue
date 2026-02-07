@@ -3,9 +3,17 @@ import { ref } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
 import { Search, Plus } from 'lucide-vue-next';
-import { supabase } from '@/lib/supabaseClient';
+import TeamCard from '@/components/TeamCard.vue';
+import { useMemberStore } from '@/store/member';
+import AddTeam from '@/components/AddTeam.vue';
 
-const isEmpty = ref(true);
+const memberStore = useMemberStore();
+const isEmpty = ref(false);
+const isClosed = ref(true);
+
+const closeModal = () => {
+  isClosed.value = true;
+};
 </script>
 
 <template>
@@ -29,13 +37,18 @@ const isEmpty = ref(true);
           />
         </div>
 
-        <BaseButton variant="primary" :width="false" class="whitespace-nowrap">
+        <BaseButton
+          variant="primary"
+          :width="false"
+          class="whitespace-nowrap"
+          @click="isClosed = false"
+        >
           <Plus />
           Ajouter une équipe
         </BaseButton>
       </div>
 
-      <div>
+      <div class="mt-8 h-full">
         <div
           class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
           v-if="isEmpty"
@@ -43,7 +56,11 @@ const isEmpty = ref(true);
           Pas d'équipe pour le moment
         </div>
 
-        <div v-else></div>
+        <div v-else class="grid grid-cols-3 gap-8">
+          <TeamCard name="Équipe Alpha" description="Description de l'équipe Alpha" />
+          <TeamCard name="EJP Adidogomé" description="L'église des jeunes prodiges d'adidogomé" />
+        </div>
+        <AddTeam @close="closeModal()" v-if="!isClosed" />
       </div>
     </section>
   </div>

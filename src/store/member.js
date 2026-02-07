@@ -39,18 +39,19 @@ export const useMemberStore = defineStore('member', () => {
     isLoading.value = true;
     error.value = null;
     const { data: userSession, error: userError } = await supabase.auth.getSession();
+    console.log(userSession.session.user);
     if (userError) {
       toast.error('Impossible de trouver des informations utilisateurs');
       throw new Error('Impossible de trouver des informations utilisateurs');
     }
 
     const uuid = userSession.session.user.id;
-    // console.log('UUID:', uuid);
-    try {
-      const { data: teams, error: teamsError } = await supabase.from('teams').select();
-    } catch {
-
-    }
+    // // console.log('UUID:', uuid);
+    // try {
+    //   const { data: teams, error: teamsError } = await supabase.from('teams').select().eq('admin_id', admin_id);
+    // } catch {
+    //   toast.error('Impossible de trouver des informations sur les équipes');
+    // }
 
     try {
       const { data } = await supabase

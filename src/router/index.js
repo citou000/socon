@@ -12,8 +12,8 @@ const routes = [
   { path: '/confirmation', component: ConfirmationView },
   { path: '/signup', component: SignUpView },
   { path: '/login', component: LoginView },
-  { path: '/', component: TeamView, meta: { requiresAuth: true } },
-  { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
+  { path: '/dashboard', component: TeamView, meta: { requiresAuth: true } },
+  { path: '/', component: DashboardView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
