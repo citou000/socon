@@ -9,6 +9,7 @@ import AddTeam from '@/components/AddTeam.vue';
 import { supabase } from '@/lib/supabaseClient';
 import { storeToRefs } from "pinia";
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import router from '@/router';
 
 const memberStore = useMemberStore();
 const { teams } = storeToRefs(memberStore);
@@ -22,8 +23,13 @@ const loading = ref(true);
 onMounted(async () => {
   await memberStore.loadTeams();
   loading.value = false;
-  console.log("This is after load",teams.value);
 });
+
+const gotoTeam = (id) => {
+  console.log("Go to team with id:", id);
+  localStorage.setItem('currentTeamId', id);
+  router.push(`/dashboard`);
+}
 
 
 //const { teams } = storeToRefs(memberStore);
@@ -69,8 +75,8 @@ onMounted(async () => {
         </div>
 
 
-        <div v-else class="grid md:grid-cols-3 md:gap-8 gap-2">
-          <TeamCard v-for="team in teams" :key="team.id" :name="team.name" />
+        <div v-else class="grid md:grid-cols-3 md:gap-6 gap-2">
+          <TeamCard v-for="team in teams" :key="team.id" :name="team.name" @click="gotoTeam(team.id)"/>
         </div>
         <AddTeam @close="closeModal()" v-if="!isClosed" />
       </div>

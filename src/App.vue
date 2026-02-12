@@ -11,8 +11,8 @@ memberStore.init();
 const { logging } = storeToRefs(useMemberStore);
 </script>
 <template>
-  <div class="flex flex-col">
-    <RouterView class="min-h-screen"/>
+  <div class="min-h-screen flex flex-col">
+    <RouterView/>
     <FooterItem v-if="!logging" />
   </div>
 </template>

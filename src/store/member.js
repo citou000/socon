@@ -40,23 +40,18 @@ export const useMemberStore = defineStore('member', () => {
   const init = async () => {
     const { data: userSession, error: userError } = await supabase.auth.getSession();
     uuid.value = userSession.session.user.id;
-    console.log("UUID from store",uuid.value)
   }
 
   const loadMembers = async () => {
     isLoading.value = true;
+    const teamId = localStorage.getItem('currentTeamId');
     error.value = null;
-    console.log(userSession.session.user);
-    if (userError) {
-      toast.error('Impossible de trouver des informations utilisateurs');
-      throw new Error('Impossible de trouver des informations utilisateurs');
-    }
+    console.log(uuid.value);
     try {
       const { data } = await supabase
         .from('souls')
         .select()
-        .eq('admin_id', uuid.value)
-        .order('id', { ascending: true });
+        .eq('team_id', teamId);
       const soulIds = data.map((s) => s.id);
       const { data: detailsData, error: detailsError } = await supabase
         .from('details')
@@ -97,7 +92,6 @@ export const useMemberStore = defineStore('member', () => {
     try {
       const { data: teamsData, error: teamsError } = await supabase.from('teams').select().eq('admin_id', uuid.value);
       teams.value = teamsData || [];
-      toast.success('Équipes chargées avec succès');
     } catch (err) {
       console.error('loadTeams: unexpected error', err);
       toast.error('Impossible de trouver des informations sur les équipes');
@@ -177,36 +171,28 @@ export const useMemberStore = defineStore('member', () => {
       date: today,
       report: updates,
     };
-    //} else {
+    currentDetails.push(update);
     console.log(currentDetails);
-    // }
 
-    // const { error: updateError } = await supabase
-    //   .from('details')
-    //   .upsert({ id: id, details: currentDetails })
-    //   .select();
-    // if (updateError) {
-    //   toast.error('Mise à jour échoué!');
-    //   throw updateError;
-    // }
+    const { error: updateError } = await supabase
+      .from('details')
+      .upsert({ id: id, details: currentDetails })
+      .select();
+    if (updateError) {
+      toast.error('Mise à jour échoué!');
+      throw updateError;
+    }
 
-    // // 4️⃣ Update local store so UI updates immediately
-    // const index = allMembers.value.findIndex((m) => m.id === id);
-    // if (index !== -1) {
-    //   // Merge updated details into the member object
-    //   allMembers.value[index] = {
-    //     ...allMembers.value[index],
-    //     details,
-    //   };
-    // }
+    // 4️⃣ Update local store so UI updates immediately
+    loadMembers(); // re-fetch to get the latest data, or you could optimistically update the specific member in allMembers
 
-    // // If the selected member is the same one, update it too
-    // if (selectedMember.value?.id === id) {
-    //   selectedMember.value = {
-    //     ...selectedMember.value,
-    //     details,
-    //   };
-    // }
+    // If the selected member is the same one, update it too
+    if (selectedMember.value?.id === id) {
+      selectedMember.value = {
+        ...selectedMember.value,
+        details,
+      };
+    }
 
     // 5️⃣ Optional: log for debugging
     console.log('Updated details:', details.value);

@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/store/auth';
 import { storeToRefs } from "pinia"
 import { useToast } from 'vue-toastification';
-// vue-toastification
+import {useMemberStore} from '@/store/member';
 
 const toast = useToast();
 const emit = defineEmits(['close']);
@@ -31,6 +31,7 @@ const submitTeam = async () => {
     emit('close');
   } else {
     toast.success("Team created successfully!");
+    useMemberStore().loadTeams();
     emit('close');
   }
 }
