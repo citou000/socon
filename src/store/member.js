@@ -16,7 +16,7 @@ export const useMemberStore = defineStore('member', () => {
   const hasMember = computed(() => {
     return allMembers.value.length > 0;
   });
-
+  
   const monthNames = [
     'Janvier',
     'Février',
@@ -31,33 +31,31 @@ export const useMemberStore = defineStore('member', () => {
     'Novembre',
     'Décembre',
   ];
+  const teams = ref([]);
 
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
   const toast = useToast();
+  const uuid = ref(null);
+
+  const init = async () => {
+    const { data: userSession, error: userError } = await supabase.auth.getSession();
+    uuid.value = userSession.session.user.id;
+    console.log("UUID from store",uuid.value)
+  }
 
   const loadMembers = async () => {
     isLoading.value = true;
     error.value = null;
-    const { data: userSession, error: userError } = await supabase.auth.getSession();
     console.log(userSession.session.user);
     if (userError) {
       toast.error('Impossible de trouver des informations utilisateurs');
       throw new Error('Impossible de trouver des informations utilisateurs');
     }
-
-    const uuid = userSession.session.user.id;
-    // // console.log('UUID:', uuid);
-    // try {
-    //   const { data: teams, error: teamsError } = await supabase.from('teams').select().eq('admin_id', admin_id);
-    // } catch {
-    //   toast.error('Impossible de trouver des informations sur les équipes');
-    // }
-
     try {
       const { data } = await supabase
         .from('souls')
         .select()
-        .eq('admin_id', uuid)
+        .eq('admin_id', uuid.value)
         .order('id', { ascending: true });
       const soulIds = data.map((s) => s.id);
       const { data: detailsData, error: detailsError } = await supabase
@@ -76,17 +74,17 @@ export const useMemberStore = defineStore('member', () => {
           details: details.value.find((d) => d.id === soul.id)?.details || {},
         };
       });
-      // const detailMap = Object.fromEntries((detailsData || []).map((d) => [d.id, d.details || {}]));
-      // console.log('Details', detailMap);
-      // allMembers.value = allMembers.value.map((soul) => {
-      //   return {
-      //     ...soul,
-      //     details: detailMap[soul.id] || {},
-      //   };
-      // });
-      // console.log('Loaded members:', allMembers.value);
-      // console.log('Details', details.value);
-      // console.log('All members', allMembers.value);
+      const detailMap = Object.fromEntries((detailsData || []).map((d) => [d.id, d.details || {}]));
+      console.log('Details', detailMap);
+      allMembers.value = allMembers.value.map((soul) => {
+        return {
+          ...soul,
+          details: detailMap[soul.id] || {},
+        };
+      });
+      console.log('Loaded members:', allMembers.value);
+      console.log('Details', details.value);
+      console.log('All members', allMembers.value);
     } catch (err) {
       error.value = err.message;
       console.error('Fetch error:', err);
@@ -95,6 +93,17 @@ export const useMemberStore = defineStore('member', () => {
     }
   };
 
+  const loadTeams = async () => {
+    try {
+      const { data: teamsData, error: teamsError } = await supabase.from('teams').select().eq('admin_id', uuid.value);
+      teams.value = teamsData || [];
+      toast.success('Équipes chargées avec succès');
+    } catch (err) {
+      console.error('loadTeams: unexpected error', err);
+      toast.error('Impossible de trouver des informations sur les équipes');
+      // teams.value = [];
+    }
+  }
   const stats = computed(() => {
     const souls = allMembers.value.length;
     const saved = Math.round(
@@ -235,5 +244,8 @@ export const useMemberStore = defineStore('member', () => {
     hasMember,
     monthNames,
     addMember,
+    teams,
+    init,
+    loadTeams,
   };
 });

@@ -65,7 +65,7 @@ const linkGeneration = () => {
 <template>
   <nav :class="[
     'px-4 py-3 flex justify-between items-center',
-    props.team ? 'bg-white border-b-1 border-purple-100' : 'bg-purple-200',
+    props.team ? 'bg-white border-b border-purple-100' : 'bg-purple-200',
   ]">
     <RouterLink to="/">
       <div class="size-10">
@@ -88,7 +88,7 @@ const linkGeneration = () => {
           @click="openCopyInvite">
           Inviter des membres
         </li>
-        <hr class="border-1 text-gray-300" />
+        <hr class="border text-gray-300" />
         <li
           class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
           @click="loggingOut">

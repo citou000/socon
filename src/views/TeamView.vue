@@ -1,19 +1,39 @@
 <script setup>
-import { ref } from 'vue';
+import { ref,computed,onMounted } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
 import { Search, Plus } from 'lucide-vue-next';
 import TeamCard from '@/components/TeamCard.vue';
-// import { useMemberStore } from '@/store/member';
+import { useMemberStore } from '@/store/member';
 import AddTeam from '@/components/AddTeam.vue';
 import { supabase } from '@/lib/supabaseClient';
+import { storeToRefs } from "pinia";
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
-// const memberStore = useMemberStore();
-const isEmpty = ref(false);
+const memberStore = useMemberStore();
+const { teams } = storeToRefs(memberStore);
+const isEmpty = computed(() => !teams.value || teams.value.length === 0);
 const isClosed = ref(true);
 const closeModal = () => {
   isClosed.value = true;
 };
+const loading = ref(true);
+
+onMounted(async () => {
+  await memberStore.loadTeams();
+  loading.value = false;
+  console.log("This is after load",teams.value);
+});
+
+
+//const { teams } = storeToRefs(memberStore);
+
+
+// onMounted(async () => {
+//   await memberStore.loadTeams();
+//   console.log('teams after load:', teams.value);
+// });
+
 </script>
 
 <template>
@@ -37,17 +57,20 @@ const closeModal = () => {
           Ajouter une équipe
         </BaseButton>
       </div>
-
+      
       <div class="mt-8 h-full">
+        <div v-if="loading" class="mt-8 h-full flex items-center justify-center text-gray-400">
+          <LoadingSpinner />
+        </div>
         <div
-          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
-          v-if="isEmpty">
+          v-else-if="isEmpty"
+          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400">
           Pas d'équipe pour le moment
         </div>
 
+
         <div v-else class="grid md:grid-cols-3 md:gap-8 gap-2">
-          <TeamCard name="Équipe Alpha" description="Description de l'équipe Alpha" />
-          <TeamCard name="EJP Adidogomé" description="L'église des jeunes prodiges d'adidogomé" />
+          <TeamCard v-for="team in teams" :key="team.id" :name="team.name" />
         </div>
         <AddTeam @close="closeModal()" v-if="!isClosed" />
       </div>

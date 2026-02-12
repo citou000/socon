@@ -1,27 +1,38 @@
 <script setup>
-// import ref from 'vue';
+import { ref } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import { X } from 'lucide-vue-next';
-// import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/store/auth';
 import { storeToRefs } from "pinia"
+import { useToast } from 'vue-toastification';
+// vue-toastification
 
+const toast = useToast();
 const emit = defineEmits(['close']);
 
 const authStore = useAuth();
 
 const { user } = storeToRefs(authStore);
 
-// const teamName = ref();
+const teamName = ref('');
+const admin_id = ref(user.value.id);
 
 
 const submitTeam = async () => {
   console.log("User from addTeam components:", user.value.id)
-  // const { data, error } = await supabase().from('teams').insert({
-  //   name: teamName.value,
-  //   admin_id: user.value.id,
-  // })
-  // if ()
+  const { data, error } = await supabase.from('teams').insert({
+    name: teamName.value,
+    admin_id: admin_id.value,
+  })
+  if (error) {
+    console.error("Error creating team:", error);
+    toast.error("Une erreur est survenue lors de la création de l'équipe.");
+    emit('close');
+  } else {
+    toast.success("Team created successfully!");
+    emit('close');
+  }
 }
 </script>
 <template>
@@ -41,7 +52,7 @@ const submitTeam = async () => {
         <div class="flex flex-col self-center w-full">
           <label for="team-name">Nom de l'équipe <sup class="text-red-500">*</sup></label>
           <input type="text" id="team-name" name="team-name" required
-            class="border-1 border-purple-200 px-1 py-2 rounded-md" />
+            class="border border-purple-200 px-1 py-2 rounded-md" v-model="teamName"/>
         </div>
 
         <BaseButton type="submit" variant="primary" @click='submitTeam'>Créer l'équipe</BaseButton>
