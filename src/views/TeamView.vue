@@ -56,7 +56,6 @@ const gotoTeam = (id) => {
         <!--   <Search size="18" class="text-gray-500 mr-2" /> -->
         <!--   <input type="text" placeholder="Rechercher" class="bg-transparent border-none outline-none w-full text-sm" /> -->
         <!-- </div> -->
-
         <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
           <Plus />
           Ajouter une équipe
