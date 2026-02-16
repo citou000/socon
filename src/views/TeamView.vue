@@ -31,7 +31,6 @@ const gotoTeam = (id) => {
   router.push(`/dashboard`);
 }
 
-
 //const { teams } = storeToRefs(memberStore);
 
 
