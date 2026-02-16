@@ -72,8 +72,6 @@ const gotoTeam = (id) => {
           class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400">
           Pas d'équipe pour le moment
         </div>
-
-
         <div v-else class="grid md:grid-cols-3 md:gap-6 gap-2">
           <TeamCard v-for="team in teams" :key="team.id" :name="team.name" @click="gotoTeam(team.id)"/>
         </div>
