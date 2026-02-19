@@ -64,10 +64,7 @@ export const useMemberStore = defineStore('member', () => {
     // }
 
     try {
-      const { data } = await supabase
-        .from('souls')
-        .select()
-        .eq('team_id', teamId);
+      const { data } = await supabase.from('souls').select().eq('team_id', teamId);
       const soulIds = data.map((s) => s.id);
       const { data: detailsData, error: detailsError } = await supabase
         .from('details')
@@ -249,6 +246,5 @@ export const useMemberStore = defineStore('member', () => {
     addMember,
     loadTeams,
     teams,
-    init,
   };
 });
