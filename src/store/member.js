@@ -32,8 +32,6 @@ export const useMemberStore = defineStore('member', () => {
     'Novembre',
     'Décembre',
   ];
-  const teams = ref([]);
-
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
   const toast = useToast();
   const uuid = ref(null);
@@ -251,5 +249,6 @@ export const useMemberStore = defineStore('member', () => {
     addMember,
     loadTeams,
     teams,
+    init,
   };
 });

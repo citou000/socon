@@ -5,7 +5,6 @@ import { useMemberStore } from './store/member';
 import { storeToRefs } from 'pinia'
 
 const memberStore = useMemberStore();
-
 memberStore.init();
 
 const { logging } = storeToRefs(useMemberStore);
