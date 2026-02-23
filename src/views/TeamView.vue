@@ -1,13 +1,12 @@
 <script setup>
-import { ref,computed,onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
-import { Search, Plus } from 'lucide-vue-next';
+import { Plus } from 'lucide-vue-next';
 import TeamCard from '@/components/TeamCard.vue';
 import { useMemberStore } from '@/store/member';
 import AddTeam from '@/components/AddTeam.vue';
-import { supabase } from '@/lib/supabaseClient';
-import { storeToRefs } from "pinia";
+import { storeToRefs } from 'pinia';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import router from '@/router';
 
@@ -20,25 +19,16 @@ const closeModal = () => {
 };
 const loading = ref(true);
 
+const gotoTeam = (id) => {
+  console.log('Go to team with id:', id);
+  localStorage.setItem('currentTeamId', id);
+  router.push(`/dashboard/${id}`);
+};
+
 onMounted(async () => {
   await memberStore.loadTeams();
   loading.value = false;
 });
-
-const gotoTeam = (id) => {
-  console.log("Go to team with id:", id);
-  localStorage.setItem('currentTeamId', id);
-  router.push(`/dashboard`);
-}
-
-//const { teams } = storeToRefs(memberStore);
-
-
-// onMounted(async () => {
-//   await memberStore.loadTeams();
-//   console.log('teams after load:', teams.value);
-// });
-
 </script>
 
 <template>
@@ -51,28 +41,34 @@ const gotoTeam = (id) => {
       <h2 class="text-5xl font-bold mb-8">Vos équipes</h2>
 
       <div class="flex items-center justify-between gap-4">
-        <!-- <div -->
-        <!--   class="flex items-center bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 w-full max-w-sm focus-within:border-purple-400 transition-all"> -->
-        <!--   <Search size="18" class="text-gray-500 mr-2" /> -->
-        <!--   <input type="text" placeholder="Rechercher" class="bg-transparent border-none outline-none w-full text-sm" /> -->
-        <!-- </div> -->
-        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
+        <BaseButton
+          variant="primary"
+          :width="false"
+          class="whitespace-nowrap"
+          @click="isClosed = false"
+        >
           <Plus />
           Ajouter une équipe
         </BaseButton>
       </div>
-      
+
       <div class="mt-8 h-full">
         <div v-if="loading" class="mt-8 h-full flex items-center justify-center text-gray-400">
           <LoadingSpinner />
         </div>
         <div
           v-else-if="isEmpty"
-          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400">
+          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
+        >
           Pas d'équipe pour le moment
         </div>
         <div v-else class="grid md:grid-cols-3 md:gap-6 gap-2">
-          <TeamCard v-for="team in teams" :key="team.id" :name="team.name" @click="gotoTeam(team.id)"/>
+          <TeamCard
+            v-for="team in teams"
+            :key="team.id"
+            :name="team.name"
+            @click="gotoTeam(team.id)"
+          />
         </div>
         <AddTeam @close="closeModal()" v-if="!isClosed" />
       </div>

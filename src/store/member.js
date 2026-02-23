@@ -2,8 +2,10 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from 'vue-toastification';
+import { useRoute } from 'vue-router';
 
 export const useMemberStore = defineStore('member', () => {
+  const route = useRoute();
   const allMembers = ref([]);
   const isLoading = ref(false);
   const error = ref(null);
@@ -47,7 +49,9 @@ export const useMemberStore = defineStore('member', () => {
 
   const loadMembers = async () => {
     isLoading.value = true;
-    const teamId = localStorage.getItem('currentTeamId');
+    const teamId = route.params.id;
+    console.log('Team id from store:', teamId);
+
     error.value = null;
     const { data: userSession, error: userError } = await supabase.auth.getSession();
     console.log(userSession.session.user);

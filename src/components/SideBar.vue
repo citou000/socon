@@ -5,6 +5,9 @@ import { useMemberStore } from '@/store/member';
 import { X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
+// TODO: Fix the fact that the sidebar is not closing when clicking outside of it
+// TODO: Fix the rendering of the details when adding a new report, it have a weird UI bug where it show like 10 accordion when it should show only 1 and when reload the page it show the correct number of accordion, maybe it's a problem with the way the details are rendered or the way the data is updated
+
 const emit = defineEmits(['close', 'addReport', 'editMember']);
 
 const store = useMemberStore();

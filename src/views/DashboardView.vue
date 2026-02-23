@@ -97,7 +97,7 @@ watch(screenWidth, (newWidth, oldWidth) => {
 </script>
 <template>
   <NavBar @addSouls="openAddMember" />
-  <main class="min-h-screen flex flex-col gap-4">
+  <main class="min-h-screen flex flex-col">
     <div class="bg-purple-200 text-purple-900 w-full py-7">
       <div class="max-w-7xl mx-auto relative flex flex-col items-center">
         <div class="overflow-hidden w-full">
@@ -140,26 +140,33 @@ watch(screenWidth, (newWidth, oldWidth) => {
         </div>
       </div>
     </div>
-    <div v-if="isLoading" class="flex justify-center items-center p-8">
-      <LoadingSpinner size="lg" />
-    </div>
-    <div
-      v-else
-      class="px-4 md:p-8 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center"
-    >
-      <DataTable @column-click="handleColumnClick" />
-      <BaseButton
-        v-if="!isAll & hasMember"
-        variant="tertiary"
-        :width="false"
-        :rounded="true"
-        :margin="true"
-        class="text-purple-800"
-        @click="store.showMore(limit)"
+    <div class="h-full flex flex-1 items-center justify-center">
+      <div v-if="isLoading" class="flex justify-center items-center">
+        <LoadingSpinner size="lg" />
+      </div>
+      <div
+        v-else
+        class="px-4 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center h-full"
       >
-        <ChevronDown />
-        Plus
-      </BaseButton>
+        <div v-if="!hasMember" class="flex justify-center items-cente rounded-lg text-gray-400">
+          <div>Pas de membres pour le moment</div>
+        </div>
+        <div v-else class="flex justify-center items-center flex-col py-8">
+          <DataTable @column-click="handleColumnClick" />
+          <BaseButton
+            v-if="!isAll & hasMember"
+            variant="tertiary"
+            :width="false"
+            :rounded="true"
+            :margin="true"
+            class="text-purple-800"
+            @click="store.showMore(limit)"
+          >
+            <ChevronDown />
+            Plus
+          </BaseButton>
+        </div>
+      </div>
     </div>
 
     <Sidebar
