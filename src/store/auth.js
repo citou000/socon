@@ -19,7 +19,6 @@ export const useAuth = defineStore('auth', () => {
       return data.session.user;
     } catch (err) {
       clearUserData();
-      console.log('Error', err);
       return null;
     }
   }
@@ -33,7 +32,6 @@ export const useAuth = defineStore('auth', () => {
     const key = `sb-${import.meta.env.VITE_SUPABASE_ID}-auth-token`;
     localStorage.removeItem(key);
     user.value = null;
-    console.log('Stale session removed');
   }
 
   // Listen to auth state changes

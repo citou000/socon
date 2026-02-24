@@ -10,6 +10,8 @@ import { storeToRefs } from 'pinia';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import router from '@/router';
 
+// TODO: Add possibility to join a team with a code and to delete a team, also add the possibility to see the members of the team and to leave the team, also add the possibility to see the details of the team like the name, the description, the members, etc.
+
 const memberStore = useMemberStore();
 const { teams } = storeToRefs(memberStore);
 const isEmpty = computed(() => !teams.value || teams.value.length === 0);
@@ -20,7 +22,6 @@ const closeModal = () => {
 const loading = ref(true);
 
 const gotoTeam = (id) => {
-  console.log('Go to team with id:', id);
   localStorage.setItem('currentTeamId', id);
   router.push(`/dashboard/${id}`);
 };

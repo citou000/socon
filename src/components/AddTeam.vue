@@ -20,7 +20,6 @@ const admin_id = ref(user.value.id);
 
 
 const submitTeam = async () => {
-  console.log("User from addTeam components:", user.value.id)
   const { data, error } = await supabase.from('teams').insert({
     name: teamName.value,
     admin_id: admin_id.value,

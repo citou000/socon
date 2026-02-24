@@ -18,20 +18,13 @@ const textareaRef = ref(null);
 const emit = defineEmits(['close', 'reportSubmission']);
 
 const handleSubmission = async () => {
-  console.log('report', report.value);
-  console.log('id', selectedMember.value.id);
   isReporting.value = true;
   await store.handleReporting(selectedMember.value.id, report.value);
   report.value = '';
   emit('reportSubmission');
 };
 
-if (import.meta.env.VITE_APP_ENV === 'development') {
-  console.log('ReportInput component loaded');
-}
-
 const close = () => {
-  console.log('Closing ReportInput');
   emit('close');
 };
 

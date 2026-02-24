@@ -50,17 +50,14 @@ export const useMemberStore = defineStore('member', () => {
   const loadMembers = async () => {
     isLoading.value = true;
     const teamId = route.params.id;
-    console.log('Team id from store:', teamId);
 
     error.value = null;
     const { data: userSession, error: userError } = await supabase.auth.getSession();
-    console.log(userSession.session.user);
     if (userError) {
       toast.error('Impossible de trouver des informations utilisateurs');
       throw new Error('Impossible de trouver des informations utilisateurs');
     }
 
-    // // console.log('UUID:', uuid);
     // try {
     //   const { data: teams, error: teamsError } = await supabase.from('teams').select().eq('admin_id', admin_id);
     // } catch {
@@ -87,16 +84,12 @@ export const useMemberStore = defineStore('member', () => {
         };
       });
       const detailMap = Object.fromEntries((detailsData || []).map((d) => [d.id, d.details || {}]));
-      console.log('Details', detailMap);
       allMembers.value = allMembers.value.map((soul) => {
         return {
           ...soul,
           details: detailMap[soul.id] || {},
         };
       });
-      console.log('Loaded members:', allMembers.value);
-      console.log('Details', details.value);
-      console.log('All members', allMembers.value);
     } catch (err) {
       error.value = err.message;
       console.error('Fetch error:', err);
@@ -178,17 +171,13 @@ export const useMemberStore = defineStore('member', () => {
     const { data, error } = await supabase.from('details').select('details').eq('id', id).single();
     if (error && error.code !== 'PGRST116') throw error;
     const currentDetails = data?.details || [];
+
     const today = new Date().toLocaleDateString('fr-FR');
-    console.log('Today is:', today);
-    //if (currentDetails[today]) {
-    console.log('Already reporting today\n', currentDetails.value);
-    console.log('Updates\n', updates);
     const update = {
       date: today,
       report: updates,
     };
     currentDetails.push(update);
-    console.log(currentDetails);
 
     const { error: updateError } = await supabase
       .from('details')
@@ -199,19 +188,15 @@ export const useMemberStore = defineStore('member', () => {
       throw updateError;
     }
 
-    // 4️⃣ Update local store so UI updates immediately
-    loadMembers(); // re-fetch to get the latest data, or you could optimistically update the specific member in allMembers
+  
+    loadMembers();
 
-    // If the selected member is the same one, update it too
     if (selectedMember.value?.id === id) {
       selectedMember.value = {
         ...selectedMember.value,
-        details,
+        details: currentDetails,
       };
     }
-
-    // 5️⃣ Optional: log for debugging
-    console.log('Updated details:', details.value);
   };
 
   const members = computed(() => {
