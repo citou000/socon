@@ -33,7 +33,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col items-center flex-1">
+  <div class="h-full flex flex-col items-center flex-1 bg-purple-50">
     <section class="w-full">
       <NavBar :team="true" />
     </section>
@@ -68,7 +68,7 @@ onMounted(async () => {
             v-for="team in teams"
             :key="team.id"
             :name="team.name"
-            @click="gotoTeam(team.id)"
+            @clicked="gotoTeam(team.id)"
           />
         </div>
         <AddTeam @close="closeModal()" v-if="!isClosed" />
