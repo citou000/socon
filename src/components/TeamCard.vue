@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { EllipsisVertical } from 'lucide-vue-next';
+import { EllipsisVertical,Pencil,Trash2 } from 'lucide-vue-next';
 defineProps({
   name: {
     type: String,
@@ -46,12 +46,14 @@ onBeforeUnmount(() => {
       />
     </div>
 
-    <div class="absolute -bottom-22 right-0 z-20 bg-white rounded-md shadow-xl font-semibold" v-if="menu">
-      <ul class="flex flex-col gap-2 p-1">
+    <div class="absolute -bottom-22 right-0 z-20 bg-white rounded-xl shadow-xl font-semibold" v-if="menu">
+      <ul class="flex flex-col gap-2 px-1 py-2">
         <li class="cursor-pointer hover:bg-purple-200 px-4 py-1 rounded-md text-gray-900">
+          <Pencil class="w-5 h-5 inline-block mr-2" />
           Modifier
         </li>
         <li class="cursor-pointer hover:bg-purple-100 px-4 py-1 rounded-md text-red-500">
+          <Trash2 class="w-5 h-5 inline-block mr-2" />
           Supprimer
         </li>
       </ul>
