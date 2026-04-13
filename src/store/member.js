@@ -188,8 +188,7 @@ export const useMemberStore = defineStore('member', () => {
       throw updateError;
     }
 
-  
-    loadMembers();
+    await loadMembers();
 
     if (selectedMember.value?.id === id) {
       selectedMember.value = {

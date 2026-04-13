@@ -1,24 +1,3 @@
-<template>
-  <div class="border-b-2 border-gray-300">
-    <!-- Summary-like header -->
-    <div
-      @click="toggle"
-      class="cursor-pointer py-3 font-bold text-gray-800 flex justify-between items-center"
-    >
-      <span>{{ props.title }}</span>
-      <span class="text-gray-500 text-2sm">{{ isOpen ? '-' : '+' }}</span>
-    </div>
-
-    <!-- Collapsible content -->
-
-    <transition name="accordion">
-      <div v-show="isOpen" class="pl-2 pb-3 text-gray-700 text-sm">
-        <slot />
-      </div>
-    </transition>
-  </div>
-</template>
-
 <script setup>
 // src/components/AccordionItem.vue
 import { inject, computed } from 'vue';
@@ -41,6 +20,27 @@ function toggle() {
   }
 }
 </script>
+
+<template>
+  <div class="border-b-2 border-gray-300">
+    <!-- Summary-like header -->
+    <div
+      @click="toggle"
+      class="cursor-pointer py-3 font-bold text-gray-800 flex justify-between items-center"
+    >
+      <span>{{ props.title }}</span>
+      <span class="text-gray-500 text-2sm">{{ isOpen ? '-' : '+' }}</span>
+    </div>
+
+    <!-- Collapsible content -->
+
+    <transition name="accordion">
+      <div v-show="isOpen" class="pl-2 pb-3 text-gray-700 text-sm">
+        <slot />
+      </div>
+    </transition>
+  </div>
+</template>
 
 <style scoped>
 .accordion-enter-active,

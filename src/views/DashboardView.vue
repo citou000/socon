@@ -41,6 +41,7 @@ const handleReporting = () => {
 };
 
 const handleSubmission = () => {
+  console.log('This is called succesfully!');
   isReporting.value = false;
 };
 
@@ -97,74 +98,78 @@ watch(screenWidth, (newWidth, oldWidth) => {
 </script>
 <template>
   <NavBar @addSouls="openAddMember" />
+
   <main class="min-h-screen flex flex-col">
-    <div class="bg-purple-200 text-purple-900 w-full py-7">
-      <div class="max-w-7xl mx-auto relative flex flex-col items-center">
-        <div class="overflow-hidden w-full">
-          <div
-            class="flex transition-transform duration-300 ease-in-out"
-            :style="{
-              transform: `translateX(-${currentIndex * 100}%)`,
-            }"
-          >
-            <div v-for="(value, key) in stats" :key="key" class="w-full shrink-0 md:shrink p-4">
-              <div
-                class="bg-purple-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 transition-all duration-300 ease-in-out rounded-2xl h-full"
-              >
-                <span class="self-start text-lg sm:text-xl font-mono font-semibold text-purple-800">
-                  {{ keys[key] }}
-                </span>
-                <span class="text-6xl sm:text-7xl lg:text-8xl font-semibold text-purple-900 mt-2">
-                  {{ value }}<span v-if="key !== 'souls'">%</span>
-                </span>
+    <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
+      <LoadingSpinner size="lg" />
+    </div>
+    <div v-else class="flex-1 flex flex-col">
+      <div class="bg-purple-200 text-purple-900 w-full py-7">
+        <div class="max-w-7xl mx-auto relative flex flex-col items-center">
+          <div class="overflow-hidden w-full">
+            <div
+              class="flex transition-transform duration-300 ease-in-out"
+              :style="{
+                transform: `translateX(-${currentIndex * 100}%)`,
+              }"
+            >
+              <div v-for="(value, key) in stats" :key="key" class="w-full shrink-0 md:shrink p-4">
+                <div
+                  class="bg-purple-100 flex flex-col items-start justify-around cursor-pointer p-6 sm:p-8 transition-all duration-300 ease-in-out rounded-2xl h-full"
+                >
+                  <span
+                    class="self-start text-lg sm:text-xl font-mono font-semibold text-purple-800"
+                  >
+                    {{ keys[key] }}
+                  </span>
+                  <span class="text-6xl sm:text-7xl lg:text-8xl font-semibold text-purple-900 mt-2">
+                    {{ value }}<span v-if="key !== 'souls'">%</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
+          <div
+            class="absolute inset-y-1/2 -translate-y-1/2 w-full px-4 flex justify-between items-center md:hidden"
+          >
+            <button
+              class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
+              @click="move('left')"
+            >
+              <MoveLeft />
+            </button>
+            <button
+              class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
+              @click="move('right')"
+            >
+              <MoveRight />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="h-full flex flex-1 items-center justify-center">
         <div
-          class="absolute inset-y-1/2 -translate-y-1/2 w-full px-4 flex justify-between items-center md:hidden"
+          class="px-4 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center h-full"
         >
-          <button
-            class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
-            @click="move('left')"
-          >
-            <MoveLeft />
-          </button>
-          <button
-            class="border border-purple-400 p-1 rounded-full bg-white/50 backdrop-blur hover:bg-white cursor-pointer"
-            @click="move('right')"
-          >
-            <MoveRight />
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="h-full flex flex-1 items-center justify-center">
-      <div v-if="isLoading" class="flex justify-center items-center">
-        <LoadingSpinner size="lg" />
-      </div>
-      <div
-        v-else
-        class="px-4 max-w-7xl mx-auto w-full overflow-scroll flex flex-col items-center h-full"
-      >
-        <div v-if="!hasMember" class="flex justify-center items-cente rounded-lg text-gray-400">
-          <div>Pas de membres pour le moment</div>
-        </div>
-        <div v-else class="flex justify-center items-center flex-col py-8">
-          <DataTable @column-click="handleColumnClick" />
-          <BaseButton
-            v-if="!isAll & hasMember"
-            variant="tertiary"
-            :width="false"
-            :rounded="true"
-            :margin="true"
-            class="text-purple-800"
-            @click="store.showMore(limit)"
-          >
-            <ChevronDown />
-            Plus
-          </BaseButton>
+          <div v-if="!hasMember" class="flex justify-center items-cente rounded-lg text-gray-400">
+            <div>Pas de membres pour le moment</div>
+          </div>
+          <div v-else class="flex justify-center items-center flex-col py-8">
+            <DataTable @column-click="handleColumnClick" />
+            <BaseButton
+              v-if="!isAll && hasMember"
+              variant="tertiary"
+              :width="false"
+              :rounded="true"
+              :margin="true"
+              class="text-purple-800"
+              @click="store.showMore(limit)"
+            >
+              <ChevronDown />
+              Plus
+            </BaseButton>
+          </div>
         </div>
       </div>
     </div>

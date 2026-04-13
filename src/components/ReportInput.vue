@@ -20,8 +20,8 @@ const emit = defineEmits(['close', 'reportSubmission']);
 const handleSubmission = async () => {
   isReporting.value = true;
   await store.handleReporting(selectedMember.value.id, report.value);
-  report.value = '';
   emit('reportSubmission');
+  report.value = '';
 };
 
 const close = () => {
@@ -64,7 +64,6 @@ onMounted(() => {
           <BaseButton @click="close" variant="secondary" type="">Annuler</BaseButton>
           <BaseButton
             variant="primary"
-            @click="handleSubmission"
             :disabled="isReporting || report.trim() === ''"
             type="submit"
           >

@@ -29,7 +29,7 @@ const editMember = () => {
 <template>
   <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end">
     <div
-      class="bg-white w-full md:w-1/3 h-screen p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col"
+      class="bg-white w-full md:w-1/3 h-screen p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col overflow-scroll"
     >
       <div class="flex justify-between items-center mb-4">
         <button @click="close" class="text-gray-500 hover:text-red-600 text-2xl cursor-pointer">
@@ -69,7 +69,7 @@ const editMember = () => {
           <span class="font-semibold text-gray-600">Détails</span>
         </p>
 
-        <div>
+        <div class="flex-1 overflow-scroll">
           <Accordion v-if="member.details.length > 0" class="border-t-2 border-gray-300">
             <AccordionItem
               v-for="(detail, index) in member.details"

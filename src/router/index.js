@@ -30,8 +30,8 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.meta.requiresAuth && !user.value) return next('/login');
-  if (to.path === '/signup' && user.value) return next('/team');
-  if (to.path === '/login' && user.value) return next('/team');
+  if (to.path === '/signup' && user.value) return next('/');
+  if (to.path === '/login' && user.value) return next('/');
   next();
 });
 
