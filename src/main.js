@@ -12,7 +12,7 @@ import App from './App.vue';
 import router from './router';
 import { createPinia } from 'pinia';
 import Toast, { toastOptions } from './plugins/toast';
-import { useAuth } from '@/store/auth';
+import { useAuth } from '@/store/authStore';
 
 // Create Vue app instance
 const app = createApp(App);

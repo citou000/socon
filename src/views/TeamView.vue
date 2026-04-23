@@ -42,12 +42,7 @@ onMounted(async () => {
       <h2 class="text-5xl font-bold mb-8">Vos équipes</h2>
 
       <div class="flex items-center justify-between gap-4">
-        <BaseButton
-          variant="primary"
-          :width="false"
-          class="whitespace-nowrap"
-          @click="isClosed = false"
-        >
+        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
           <Plus />
           Ajouter une équipe
         </BaseButton>
@@ -57,19 +52,12 @@ onMounted(async () => {
         <div v-if="loading" class="mt-8 h-full flex items-center justify-center text-gray-400">
           <LoadingSpinner />
         </div>
-        <div
-          v-else-if="isEmpty"
-          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
-        >
+        <div v-else-if="isEmpty"
+          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400">
           Pas d'équipe pour le moment
         </div>
         <div v-else class="grid md:grid-cols-3 md:gap-6 gap-2">
-          <TeamCard
-            v-for="team in teams"
-            :key="team.id"
-            :name="team.name"
-            @clicked="gotoTeam(team.id)"
-          />
+          <TeamCard v-for="team in teams" :key="team.id" :name="team.name" @clicked="gotoTeam(team.id)" />
         </div>
         <AddTeam @close="closeModal()" v-if="!isClosed" />
       </div>

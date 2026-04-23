@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useAuth } from '@/store/authStore';
 
 export const useMemberStore = defineStore('member', () => {
   const route = useRoute();
@@ -19,6 +21,8 @@ export const useMemberStore = defineStore('member', () => {
     return allMembers.value.length > 0;
   });
   const teams = ref([]);
+  const auth = useAuth();
+  const { user } = storeToRefs(auth);
 
   const monthNames = [
     'Janvier',
@@ -36,33 +40,11 @@ export const useMemberStore = defineStore('member', () => {
   ];
   const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
   const toast = useToast();
-  const uuid = ref(null);
-
-  async function init() {
-    const { data: userSession, error: userError } = await supabase.auth.getSession();
-    if (userError) {
-      toast.error('Impossible de trouver des informations utilisateurs');
-      throw new Error('Impossible de trouver des informations utilisateurs');
-    }
-    uuid.value = userSession.session.user.id;
-  }
 
   const loadMembers = async () => {
     isLoading.value = true;
     const teamId = route.params.id;
-
     error.value = null;
-    const { data: userSession, error: userError } = await supabase.auth.getSession();
-    if (userError) {
-      toast.error('Impossible de trouver des informations utilisateurs');
-      throw new Error('Impossible de trouver des informations utilisateurs');
-    }
-
-    // try {
-    //   const { data: teams, error: teamsError } = await supabase.from('teams').select().eq('admin_id', admin_id);
-    // } catch {
-    //   toast.error('Impossible de trouver des informations sur les équipes');
-    // }
 
     try {
       const { data } = await supabase.from('souls').select().eq('team_id', teamId);
@@ -99,12 +81,28 @@ export const useMemberStore = defineStore('member', () => {
   };
 
   async function loadTeams() {
-    const { data: teamsData, error: teamsError } = await supabase.from('teams').select();
-    if (teamsError) {
+    console.log(user.value.id)
+    const { data, error } = await supabase.from('members').select(`
+      role,
+      teams(
+        id,
+        name
+      )
+    `).eq('user_id', user.value.id);
+    console.log(data);
+    if (error) {
       toast.error('Impossible de trouver des informations sur les équipes');
-      throw new Error('Impossible de trouver des informations sur les équipes');
     }
-    teams.value = teamsData;
+    teams.value = data.map((team) => {
+      return team.teams;
+    })
+    console.log(teams.value)
+    //const { data: teamsData, error: teamsError } = await supabase.from('teams').select().eq('id', team[0].team_id);
+    //if (teamsError) {
+    //  toast.error('Impossible de trouver des informations sur les équipes');
+    //  throw new Error('Impossible de trouver des informations sur les équipes');
+    //}
+    // teams.value = teamsData;
   }
 
   const stats = computed(() => {
@@ -168,6 +166,9 @@ export const useMemberStore = defineStore('member', () => {
   };
 
   const handleReporting = async (id, updates) => {
+    /*
+     The id is real because it's used to fetch the currentDetails, and the retrieve was done successfully
+     * */
     const { data, error } = await supabase.from('details').select('details').eq('id', id).single();
     if (error && error.code !== 'PGRST116') throw error;
     const currentDetails = data?.details || [];
@@ -178,11 +179,21 @@ export const useMemberStore = defineStore('member', () => {
       report: updates,
     };
     currentDetails.push(update);
+    console.log("Current details:", currentDetails);
+
+    /*
+    The currentDetails are displayed correctly
+    */
 
     const { error: updateError } = await supabase
       .from('details')
       .upsert({ id: id, details: currentDetails })
       .select();
+
+    // Now we choose the table with the .from and the table choosen is the details, and we upsert an
+    // Object and the .select is for what ?
+    // And the id we put in the upserted object is the id sent, and used in the retrieving of the
+    // details so it can't be false
     if (updateError) {
       toast.error('Mise à jour échoué!');
       throw updateError;
@@ -211,7 +222,6 @@ export const useMemberStore = defineStore('member', () => {
     limit.value += Math.min(inc, remaining);
   };
 
-  init();
 
   return {
     members,

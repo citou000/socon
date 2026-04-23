@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import { X } from 'lucide-vue-next';
 import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from '@/store/auth';
+import { useAuth } from '@/store/authStore';
 import { storeToRefs } from "pinia"
 import { useToast } from 'vue-toastification';
 import {useMemberStore} from '@/store/member';

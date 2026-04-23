@@ -5,7 +5,7 @@ import DashboardView from '@/views/DashboardView.vue';
 import SignUpView from '@/views/SignUpView.vue';
 import TeamView from '@/views/TeamView.vue';
 import ConfirmationView from '@/views/ConfirmationView.vue';
-import { useAuth } from '@/store/auth';
+import { useAuth } from '@/store/authStore';
 import { storeToRefs } from 'pinia';
 
 const routes = [
@@ -25,9 +25,8 @@ router.beforeEach(async (to, from, next) => {
   const auth = useAuth();
   const { user, initialized } = storeToRefs(auth);
 
-  if (!initialized.value) {
+  if (!initialized.value)
     await auth.init();
-  }
 
   if (to.meta.requiresAuth && !user.value) return next('/login');
   if (to.path === '/signup' && user.value) return next('/');

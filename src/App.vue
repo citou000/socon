@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from "vue";
 import { RouterView } from 'vue-router';
 import FooterItem from '@/components/FooterItem.vue';
 import { useMemberStore } from './store/member';
@@ -6,7 +7,7 @@ import { storeToRefs } from 'pinia';
 
 const memberStore = useMemberStore();
 
-const { logging } = storeToRefs(useMemberStore);
+const { logging } = storeToRefs(memberStore);
 </script>
 <template>
   <div class="min-h-screen flex flex-col">

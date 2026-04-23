@@ -45,7 +45,7 @@ const handleConnect = async () => {
 
   try {
     loading.value = true;
-    const { error: signupError } = await supabase.auth.signUp({
+    const { data, error: signupError } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
       options: {
@@ -58,6 +58,16 @@ const handleConnect = async () => {
       toast.error(signupError.message);
       loading.value = false;
       return;
+    }
+    if (data.user) {
+      const { error } = await supabase.from("profiles").insert({
+        id: data.user.id,
+        full_name: name.value,
+        email: email.value,
+      })
+      if (error) {
+        toast.error("Erreur à la création du compte");
+      }
     }
     loading.value = false;
     toast.success('Signup successful! Please check your email to confirm your account.');
@@ -73,63 +83,36 @@ const handleConnect = async () => {
 <template>
   <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
     <div
-      class="bg-white py-8 flex flex-col gap-4 px-2 md:w-md md:h-auto size-full md:text-base md:rounded-2xl text-sm relative justify-center"
-    >
+      class="bg-white py-8 flex flex-col gap-4 px-2 md:w-md md:h-auto size-full md:text-base md:rounded-2xl text-sm relative justify-center">
       <div class="flex flex-col items-center">
         <img :src="logo" alt="Logo" class="size-8 object-contain" />
         <h1 class="text-balance text-gray-400">Bienvenue sur Soul Connect</h1>
       </div>
-      <form
-        class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full"
-        @submit.prevent="handleConnect"
-      >
+      <form class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full" @submit.prevent="handleConnect">
         <div class="flex flex-col gap-1 w-full">
-          <label for="name">Name</label>
-          <input
-            required
-            type="text"
-            id="name"
-            v-model="name"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          />
+          <label for="name">Nom et Prénoms</label>
+          <input required type="text" id="name" v-model="name"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in" />
         </div>
         <div class="flex flex-col gap-1 w-full">
           <label for="email">E-mail</label>
-          <input
-            required
-            type="email"
-            id="email"
-            v-model="email"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          />
+          <input required type="email" id="email" v-model="email"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in" />
         </div>
         <div class="flex flex-col gap-1 w-full">
-          <label for="password">Password</label>
-          <input
-            required
-            type="password"
-            id="password"
-            v-model="password"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          />
+          <label for="password">Mot de Passe</label>
+          <input required type="password" id="password" v-model="password"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in" />
         </div>
 
         <div class="flex flex-col gap-1 w-full">
           <label for="confirmedPassword">Confirmer le mot de passe</label>
-          <input
-            required
-            type="password"
-            id="confirmedPassword"
-            v-model="confirmedPassword"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          />
+          <input required type="password" id="confirmedPassword" v-model="confirmedPassword"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in" />
         </div>
         <div class="flex justify-center mt-4 w-full">
-          <BaseButton
-            variant="primary"
-            :disabled="loading || !email || !password || !confirmedPassword || !name"
-            type="submit"
-          >
+          <BaseButton variant="primary" :disabled="loading || !email || !password || !confirmedPassword || !name"
+            type="submit">
             <LoadingSpinner v-if="loading" size="sm" />
             <span v-else>S'inscrire</span>
           </BaseButton>

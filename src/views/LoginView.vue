@@ -36,7 +36,7 @@ const handleConnect = async () => {
       return;
     }
 
-    toast.success('Signed in successfully!');
+    toast.success('Connecté avec succès');
     router.push('/');
   } catch {
     toast.error('Something went wrong. Please try again later.');
@@ -49,35 +49,21 @@ const handleConnect = async () => {
 <template>
   <div class="flex flex-col items-center bg-purple-100 w-full h-screen justify-center gap-7">
     <div
-      class="bg-white py-8 flex flex-col gap-4 px-2 md:w-md md:h-auto size-full md:text-base md:rounded-2xl text-sm relative justify-center"
-    >
+      class="bg-white py-8 flex flex-col gap-4 px-2 md:w-md md:h-auto size-full md:text-base md:rounded-2xl text-sm relative justify-center">
       <div class="flex flex-col items-center">
         <img :src="logo" alt="Logo" class="size-12 object-contain" />
         <h1 class="text-balance text-gray-400">Bon retour sur Soul Connect</h1>
       </div>
-      <form
-        class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full"
-        @submit.prevent="handleConnect"
-      >
+      <form class="flex flex-col gap-3 p-5 rounded-2xl items-center w-full" @submit.prevent="handleConnect">
         <div class="flex flex-col gap-1 w-full">
           <label for="email">E-mail</label>
-          <input
-            required
-            type="email"
-            id="email"
-            v-model="email"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          />
+          <input required type="email" id="email" v-model="email"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in" />
         </div>
         <div class="flex flex-col gap-1 w-full">
           <label for="password">Password</label>
-          <input
-            required
-            type="password"
-            id="password"
-            v-model="password"
-            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in"
-          />
+          <input required type="password" id="password" v-model="password"
+            class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in" />
         </div>
         <div class="flex justify-center mt-4 w-full">
           <BaseButton variant="primary" :disabled="loading || email === '' || password === ''">
