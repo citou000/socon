@@ -1,36 +1,29 @@
-# socon-front
+# Socon Front
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue 3 application for managing teams and members, built with Vite and powered by Supabase. This app is designed to help organizations track and manage outreach efforts, member details, and reporting.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Authentication**: Secure sign-up and login using Supabase Auth
+- **Team Management**: View and add teams, with easy navigation to team dashboards
+- **Member Tracking**: Add, edit, and view members (referred to as "souls") with details like name, neighborhood, status, and custom fields
+- **Reporting**: Submit and view weekly reports for members
+- **Dashboard**: Interactive data tables, statistics (e.g., saved percentages), and a responsive sidebar for member details
+- **Responsive Design**: Mobile-friendly with auto-sliding stats on smaller screens
+- **Notifications**: Toast messages for user feedback
 
-## Customize configuration
+## Tech Stack
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **Frontend**: Vue 3 (Composition API), Vue Router, Pinia
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS, PrimeIcons, Lucide Vue Next
+- **Backend**: Supabase (Auth & Database)
+- **Linting/Formatting**: ESLint, Oxlint, Prettier
+- **Other**: Vue Toastification, Vue Devtools
 
-## Project Setup
+## Installation
 
-```sh
-pnpm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
-```
-
-### Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
-# socon
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/citou000/socon.git
+   cd socon
