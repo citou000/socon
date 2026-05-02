@@ -5,7 +5,7 @@ import { useMemberStore } from '@/store/member';
 import { X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
-// TODO: Fix the fact that the sidebar is not closing when clicking outside of it
+//TODO: Fix the fact that the sidebar is not closing when clicking outside of it
 
 const emit = defineEmits(['close', 'addReport', 'editMember']);
 
