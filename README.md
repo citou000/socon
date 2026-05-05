@@ -43,7 +43,7 @@ src/
 
 ### 1. Cloner le dépôt :
 
-```
+```bash
 git clone [https://github.com/citou000/socon.git](https://github.com/citou000/socon.git)
 cd socon
 ```
@@ -51,14 +51,14 @@ cd socon
 
 ### 2. Installer les dépendances :
 
-```
+```bash
 pnpm install
 ```
 
 ### 3. Configurer l'environnement :
 Créez un fichier .env à la racine et ajoutez vos identifiants Supabase :
 
-```
+```bash
 VITE_SUPABASE_URL=votre_url_supabase
 VITE_SUPABASE_ANON_KEY=votre_cle_anonyme
 ```
