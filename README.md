@@ -66,7 +66,9 @@ VITE_SUPABASE_ANON_KEY=votre_cle_anonyme
 
 ### 4. Lancer l'application :
 
+```bash
 pnpm dev
+```
 
 
 ## 📝 Qualité du Code
