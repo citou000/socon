@@ -38,16 +38,21 @@ onMounted(async () => {
       <NavBar :team="true" />
     </section>
 
-    <section class="mt-12 w-full max-w-5xl px-6 h-full">
+    <section class="mt-12 w-full max-w-5xl px-6 h-full flex items-center justify-between">
       <h2 class="text-5xl font-bold mb-8">Vos équipes</h2>
 
       <div class="flex items-center justify-between gap-4">
         <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
           <Plus />
-          Ajouter une équipe
+          Créer une équipe
+        </BaseButton>
+        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
+          <Plus />
+          Rejoindre une équipe
         </BaseButton>
       </div>
-
+    </section>
+    <section class="mt-12 w-full max-w-5xl px-6 h-full">
       <div class="mt-8 h-full">
         <div v-if="loading" class="mt-8 h-full flex items-center justify-center text-gray-400">
           <LoadingSpinner />
