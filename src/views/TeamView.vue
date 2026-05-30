@@ -2,13 +2,14 @@
 import { ref, computed, onMounted } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NavBar from '@/components/NavBar.vue';
-import { Plus } from 'lucide-vue-next';
+import { Plus } from '@lucide/vue';
 import TeamCard from '@/components/TeamCard.vue';
 import { useMemberStore } from '@/store/member';
 import AddTeam from '@/components/AddTeam.vue';
 import { storeToRefs } from 'pinia';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import router from '@/router';
+import JoinTeam from '@/components/JoinTeam.vue';
 
 // TODO: Add possibility to join a team with a code and to delete a team, also add the possibility to see the members of the team and to leave the team, also add the possibility to see the details of the team like the name, the description, the members, etc.
 
@@ -20,6 +21,7 @@ const closeModal = () => {
   isClosed.value = true;
 };
 const loading = ref(true);
+const joinTeam = ref(false);
 
 const gotoTeam = (id) => {
   localStorage.setItem('currentTeamId', id);
@@ -46,7 +48,7 @@ onMounted(async () => {
           <Plus />
           Créer une équipe
         </BaseButton>
-        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
+        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="joinTeam = true">
           <Plus />
           Rejoindre une équipe
         </BaseButton>
@@ -65,6 +67,7 @@ onMounted(async () => {
           <TeamCard v-for="team in teams" :key="team.id" :name="team.name" @clicked="gotoTeam(team.id)" />
         </div>
         <AddTeam @close="closeModal()" v-if="!isClosed" />
+        <JoinTeam @close="joinTeam = false" v-if="joinTeam" />
       </div>
     </section>
   </div>

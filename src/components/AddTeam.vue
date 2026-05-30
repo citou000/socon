@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import BaseButton from '@/components/BaseButton.vue';
-import { X } from 'lucide-vue-next';
+import { X } from '@lucide/vue';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/store/authStore';
 import { storeToRefs } from "pinia"

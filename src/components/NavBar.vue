@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import { supabase } from '@/lib/supabaseClient';
 import BaseButton from '@/components/BaseButton.vue';
-import { Plus } from 'lucide-vue-next';
+import { Plus } from '@lucide/vue';
 import { useRouter } from 'vue-router';
 
 const toast = useToast();
@@ -66,7 +66,7 @@ const linkGeneration = () => {
   <nav
     :class="[
       'px-4 py-3 flex justify-between items-center',
-      props.team ? 'bg-white border-b-1 border-purple-100' : 'bg-purple-200',
+      props.team ? 'bg-purple-50' : 'bg-purple-200',
     ]"
   >
     <RouterLink to="/">

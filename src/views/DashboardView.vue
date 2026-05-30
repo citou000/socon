@@ -1,16 +1,16 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
-import DataTable from '@/components/DataTable.vue';
-import Sidebar from '@/components/SideBar.vue';
-import ReportInput from '@/components/ReportInput.vue';
-import MemberEdit from '@/components/MemberEdit.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import { MoveLeft, MoveRight, ChevronDown } from 'lucide-vue-next';
-import { useMemberStore } from '@/store/member';
-import { storeToRefs } from 'pinia';
-import BaseButton from '@/components/BaseButton.vue';
-import NavBar from '@/components/NavBar.vue';
-import addMember from '@/components/AddMember.vue';
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
+import DataTable from "@/components/DataTable.vue";
+import Sidebar from "@/components/SideBar.vue";
+import ReportInput from "@/components/ReportInput.vue";
+import MemberEdit from "@/components/MemberEdit.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import { MoveLeft, MoveRight, ChevronDown } from "@lucide/vue";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import BaseButton from "@/components/BaseButton.vue";
+import NavBar from "@/components/NavBar.vue";
+import addMember from "@/components/AddMember.vue";
 
 const store = useMemberStore();
 
@@ -41,7 +41,7 @@ const handleReporting = () => {
 };
 
 const handleSubmission = () => {
-  console.log('This is called succesfully!');
+  console.log("This is called succesfully!");
   isReporting.value = false;
 };
 
@@ -50,7 +50,7 @@ const handleMemberEditing = () => {
 };
 
 const move = (direction) => {
-  if (direction === 'left') {
+  if (direction === "left") {
     currentIndex.value =
       currentIndex.value > 0 ? currentIndex.value - 1 : Object.keys(stats.value).length - 1;
   } else {
@@ -61,7 +61,7 @@ const move = (direction) => {
 
 function startAutoSlide() {
   clearInterval(intervalId);
-  intervalId = setInterval(() => move('right'), 5000);
+  intervalId = setInterval(() => move("right"), 5000);
 }
 
 function stopAutoSlide() {
@@ -76,7 +76,7 @@ const openAddMember = async () => {
 };
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
   if (screenWidth.value < 768) {
     startAutoSlide();
   }
@@ -85,7 +85,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stopAutoSlide();
-  window.removeEventListener('resize', handleResize);
+  window.removeEventListener("resize", handleResize);
 });
 
 watch(screenWidth, (newWidth, oldWidth) => {
@@ -97,7 +97,7 @@ watch(screenWidth, (newWidth, oldWidth) => {
 });
 </script>
 <template>
-  <NavBar @addSouls="openAddMember" />
+  <NavBar @addSouls="openAddMember" v-if="!isLoading" />
 
   <main class="min-h-screen flex flex-col">
     <div v-if="isLoading" class="flex justify-center items-center min-h-screen">

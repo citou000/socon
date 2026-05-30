@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { EllipsisVertical,Pencil,Trash2 } from 'lucide-vue-next';
+import { EllipsisVertical,Pencil,Trash2 } from '@lucide/vue';
 defineProps({
   name: {
     type: String,

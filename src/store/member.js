@@ -5,6 +5,7 @@ import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuth } from '@/store/authStore';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
 export const useMemberStore = defineStore('member', () => {
   const route = useRoute();
@@ -74,6 +75,7 @@ export const useMemberStore = defineStore('member', () => {
       });
     } catch (err) {
       error.value = err.message;
+      isLoading.value = false;
       console.error('Fetch error:', err);
     } finally {
       isLoading.value = false;
@@ -92,17 +94,13 @@ export const useMemberStore = defineStore('member', () => {
     console.log(data);
     if (error) {
       toast.error('Impossible de trouver des informations sur les équipes');
+      isLoading.value = false;
+      throw new Error('Impossible de trouver des informations sur les équipes');
     }
     teams.value = data.map((team) => {
       return team.teams;
     })
     console.log(teams.value)
-    //const { data: teamsData, error: teamsError } = await supabase.from('teams').select().eq('id', team[0].team_id);
-    //if (teamsError) {
-    //  toast.error('Impossible de trouver des informations sur les équipes');
-    //  throw new Error('Impossible de trouver des informations sur les équipes');
-    //}
-    // teams.value = teamsData;
   }
 
   const stats = computed(() => {

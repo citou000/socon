@@ -2,7 +2,7 @@
 import Accordion from '@/components/AccordionWrapper.vue';
 import AccordionItem from '@/components/AccordionItem.vue';
 import { useMemberStore } from '@/store/member';
-import { X } from 'lucide-vue-next';
+import { X } from '@lucide/vue';
 import { storeToRefs } from 'pinia';
 
 //TODO: Fix the fact that the sidebar is not closing when clicking outside of it

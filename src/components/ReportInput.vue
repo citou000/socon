@@ -1,5 +1,5 @@
 <script setup>
-import { X } from 'lucide-vue-next';
+import { X } from '@lucide/vue';
 import BaseButton from '@/components/BaseButton.vue';
 import { ref, onMounted } from 'vue';
 import { useMemberStore } from '@/store/member';

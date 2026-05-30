@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-// import { Search, ListFilter } from 'lucide-vue-next'
+// import { Search, ListFilter } from '@lucide/vue'
 // import BaseButton from '@/components/BaseButton.vue'
 
 const tabs = ref('all');
