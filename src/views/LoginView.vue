@@ -74,18 +74,18 @@ const handleConnect = async () => {
         <div class="flex flex-col gap-1 w-full">
           <label for="password">Password</label>
           <div
-            class="flex items-center border-2 outline-0 focus:border-2 rounded-md transition-all ease-in w-full relative"
+            class="flex items-center rounded-md transition-all ease-in w-full relative"
           >
             <input
               required
               :type="showPassword ? 'text' : 'password'"
               id="password"
               v-model="password"
-              class="bg-transparent w-full py-2 px-1 outline-0 border-purple-100 focus:border-purple-400"
+              class="border-2 border-purple-100 focus:border-purple-400 outline-0 focus:border-2 rounded-md py-2 px-1 transition-all ease-in w-full"
             />
             <button class="px-2 bg-transparent absolute right-0">
-              <Eye v-if="!showPassword" @click="showPassword = true" class="size-4" />
-              <EyeClosed v-else @click="showPassword = false" class="size-4" />
+              <Eye v-if="!showPassword" @click="showPassword = true" class="size-4 cursor-pointer" />
+              <EyeClosed v-else @click="showPassword = false" class="size-4 cursor-pointer" />
             </button>
           </div>
         </div>

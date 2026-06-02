@@ -1,24 +1,24 @@
 <script setup>
-import { ref, nextTick } from 'vue';
-import { X } from '@lucide/vue';
-import BaseButton from '@/components/BaseButton.vue';
-import { useMemberStore } from '@/store/member';
-import { storeToRefs } from 'pinia';
+import { ref } from "vue";
+import { X } from "@lucide/vue";
+import BaseButton from "@/components/BaseButton.vue";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
 
 const store = useMemberStore();
 
 const { selectedMember } = storeToRefs(store);
 
-const emit = defineEmits(['close', 'save']);
+const emit = defineEmits(["close", "save"]);
 
-const name = ref('');
-const soulHarvesters = ref('');
-const neighborhood = ref('');
+const name = ref("");
+const soulHarvesters = ref("");
+const neighborhood = ref("");
 const salvationStatus = ref(false);
-const contact = ref('');
-const Todaysdate = ref(new Date().toISOString().split('T')[0]);
+const contact = ref("");
+const todayDate = ref(new Date().toISOString().split("T")[0]);
 const monthName = ref(store.monthNames[new Date().getMonth()]);
-const today = new Date().toLocaleDateString('fr-FR');
+const today = new Date().toLocaleDateString("fr-FR");
 const nameInput = ref(null);
 
 const handleSave = async () => {
@@ -28,7 +28,7 @@ const handleSave = async () => {
     neighborhood: neighborhood.value,
     soulHarvesters: soulHarvesters.value,
     salvationStatus: salvationStatus.value,
-    date: Todaysdate.value,
+    date: todayDate.value,
     month: monthName.value,
   };
   //
@@ -45,16 +45,15 @@ const handleSave = async () => {
   //  // mentor_id and team_id are left empty for later
   //};
   // await store.updateMember(id, updates);
-  emit('close');
+  emit("close");
 };
 
 const setFocus = async () => {
-  await nextTick();
   nameInput.value?.focus();
 };
 
 const close = () => {
-  emit('close');
+  emit("close");
 };
 defineExpose({ setFocus });
 </script>
@@ -72,33 +71,33 @@ defineExpose({ setFocus });
           ref="nameInput"
           v-model="name"
           type="text"
-          class="border border-purple-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          class="border border-purple-200 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-purple-400"
         />
 
         <label class="text-sm font-semibold text-gray-600">Gagneur d'âmes</label>
         <input
           v-model="soulHarvesters"
           type="text"
-          class="border border-purple-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          class="border border-purple-200 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-purple-400"
         />
 
         <label class="text-sm font-semibold text-gray-600">Quartier</label>
         <input
           v-model="neighborhood"
           type="text"
-          class="border border-purple-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          class="border border-purple-200 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-purple-400"
         />
         <label class="text-sm font-semibold text-gray-600">Contact</label>
         <input
           v-model="contact"
           type="text"
-          class="border border-purple-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          class="border border-purple-200 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-purple-400"
         />
 
         <label class="text-sm font-semibold text-gray-600">Sauvé</label>
         <select
           v-model="salvationStatus"
-          class="border border-purple-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-purple-400"
+          class="border border-purple-200 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-purple-400"
         >
           <option :value="true">Oui</option>
           <option :value="false">Non</option>

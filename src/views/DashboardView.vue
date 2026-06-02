@@ -98,7 +98,6 @@ watch(screenWidth, (newWidth, oldWidth) => {
 </script>
 <template>
   <NavBar @addSouls="openAddMember" v-if="!isLoading" />
-
   <main class="min-h-screen flex flex-col">
     <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
       <LoadingSpinner size="lg" />

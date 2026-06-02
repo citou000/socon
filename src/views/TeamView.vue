@@ -1,15 +1,15 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import BaseButton from '@/components/BaseButton.vue';
-import NavBar from '@/components/NavBar.vue';
-import { Plus } from '@lucide/vue';
-import TeamCard from '@/components/TeamCard.vue';
-import { useMemberStore } from '@/store/member';
-import AddTeam from '@/components/AddTeam.vue';
-import { storeToRefs } from 'pinia';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import router from '@/router';
-import JoinTeam from '@/components/JoinTeam.vue';
+import { ref, computed, onMounted, nextTick } from "vue";
+import BaseButton from "@/components/BaseButton.vue";
+import NavBar from "@/components/NavBar.vue";
+import { Plus } from "@lucide/vue";
+import TeamCard from "@/components/TeamCard.vue";
+import { useMemberStore } from "@/store/member";
+import AddTeam from "@/components/AddTeam.vue";
+import { storeToRefs } from "pinia";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import router from "@/router";
+import joinTeam from "@/components/JoinTeam.vue";
 
 // TODO: Add possibility to join a team with a code and to delete a team, also add the possibility to see the members of the team and to leave the team, also add the possibility to see the details of the team like the name, the description, the members, etc.
 
@@ -20,11 +20,19 @@ const isClosed = ref(true);
 const closeModal = () => {
   isClosed.value = true;
 };
+const teamAdd = ref(null);
+const teamJoin = ref(null);
 const loading = ref(true);
-const joinTeam = ref(false);
+const isJoining = ref(false);
+
+const openPopup = async () => {
+  isJoining.value = true;
+  await nextTick();
+  teamJoin.value?.setFocus();
+};
 
 const gotoTeam = (id) => {
-  localStorage.setItem('currentTeamId', id);
+  localStorage.setItem("currentTeamId", id);
   router.push(`/dashboard/${id}`);
 };
 
@@ -40,15 +48,20 @@ onMounted(async () => {
       <NavBar :team="true" />
     </section>
 
-    <section class="mt-12 w-full max-w-5xl px-6 h-full flex items-center justify-between">
-      <h2 class="text-5xl font-bold mb-8">Vos équipes</h2>
+    <section class="mt-6 w-full max-w-5xl px-6 flex items-center justify-between gap-4">
+      <h2 class="text-5xl font-bold">Vos équipes</h2>
 
-      <div class="flex items-center justify-between gap-4">
-        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="isClosed = false">
+      <div class="flex items-center justify-center gap-4">
+        <BaseButton
+          variant="primary"
+          :width="false"
+          class="whitespace-nowrap"
+          @click="isClosed = false"
+        >
           <Plus />
           Créer une équipe
         </BaseButton>
-        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="joinTeam = true">
+        <BaseButton variant="primary" :width="false" class="whitespace-nowrap" @click="openPopup">
           <Plus />
           Rejoindre une équipe
         </BaseButton>
@@ -59,15 +72,22 @@ onMounted(async () => {
         <div v-if="loading" class="mt-8 h-full flex items-center justify-center text-gray-400">
           <LoadingSpinner />
         </div>
-        <div v-else-if="isEmpty"
-          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400">
+        <div
+          v-else-if="isEmpty"
+          class="mt-8 border-2 border-dashed border-gray-200 rounded-xl h-64 flex items-center justify-center text-gray-400"
+        >
           Pas d'équipe pour le moment
         </div>
         <div v-else class="grid md:grid-cols-3 md:gap-6 gap-2">
-          <TeamCard v-for="team in teams" :key="team.id" :name="team.name" @clicked="gotoTeam(team.id)" />
+          <TeamCard
+            v-for="team in teams"
+            :key="team.id"
+            :name="team.name"
+            @clicked="gotoTeam(team.id)"
+          />
         </div>
-        <AddTeam @close="closeModal()" v-if="!isClosed" />
-        <JoinTeam @close="joinTeam = false" v-if="joinTeam" />
+        <AddTeam @close="closeModal()" v-if="!isClosed" ref="teamAdd" />
+        <joinTeam @close="isJoining = false" v-if="isJoining" ref="teamJoin" />
       </div>
     </section>
   </div>
