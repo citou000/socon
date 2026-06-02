@@ -1,51 +1,51 @@
 <script setup>
-import Accordion from '@/components/AccordionWrapper.vue';
-import AccordionItem from '@/components/AccordionItem.vue';
-import { useMemberStore } from '@/store/member';
-import { X } from '@lucide/vue';
-import { storeToRefs } from 'pinia';
+import Accordion from "@/components/AccordionWrapper.vue";
+import AccordionItem from "@/components/AccordionItem.vue";
+import { useMemberStore } from "@/store/member";
+import { X } from "@lucide/vue";
+import { storeToRefs } from "pinia";
 
 //TODO: Fix the fact that the sidebar is not closing when clicking outside of it
 
-const emit = defineEmits(['close', 'addReport', 'editMember']);
+const emit = defineEmits(["close", "addReport", "editMember"]);
 
 const store = useMemberStore();
 
 const { selectedMember: member } = storeToRefs(store);
 
 const close = () => {
-  emit('close');
+  emit("close");
 };
 
 const addReport = () => {
-  emit('addReport');
+  emit("addReport");
 };
 
 const editMember = () => {
-  emit('editMember');
+  emit("editMember");
 };
 </script>
 
 <template>
   <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end">
     <div
-      class="bg-white w-full md:w-1/3 h-screen p-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col overflow-scroll"
+      class="bg-white w-full md:w-1/3 h-screen px-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col overflow-scroll gap-6"
     >
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center sticky top-0 bg-white z-10 pt-8">
         <button @click="close" class="text-gray-500 hover:text-red-600 text-2xl cursor-pointer">
           <X />
         </button>
       </div>
 
       <div v-if="member" class="space-y-4 flex flex-col">
-        <h2 class="font-bold text-5xl text-purple-800 flex justify-between">
+        <h2 class="font-black text-6xl text-purple-800 flex justify-between">
           {{ member.name }}
         </h2>
         <p class="font-bold flex justify-between">
           <span class="font-semibold text-gray-600">Quartier:</span> {{ member.neighborhood }}
         </p>
         <p class="font-bold flex justify-between">
-          <span class="font-semibold text-gray-600">Contact</span>
+          <span class="font-semibold text-gray-600">Contact:</span>
           <a :href="`tel: ${member.contact}`">{{ member.contact }}</a>
         </p>
         <p class="font-bold flex justify-between items-center">
@@ -60,7 +60,7 @@ const editMember = () => {
                 : 'text-red-500 bg-red-400/10',
             ]"
           >
-            {{ member.salvationStatus ? 'Oui' : 'Non' }}
+            {{ member.salvationStatus ? "Oui" : "Non" }}
           </span>
         </p>
 
@@ -70,13 +70,13 @@ const editMember = () => {
         </p>
 
         <div class="flex-1 overflow-scroll">
-          <Accordion v-if="member.details.length > 0" class="border-t-2 border-gray-300">
+          <Accordion v-if="member.details.details?.length > 0" class="border-t-2 border-gray-300">
             <AccordionItem
-              v-for="(detail, index) in member.details"
+              v-for="(detail, index) in member.details.details"
               :key="index"
               :title="`Semaine ${index + 1}`"
             >
-              <p class="text-gray-700 whitespace-pre-line">{{ detail.report }}</p>
+              <p class="text-gray-700 whitespace-pre-line font-light">{{ detail.report }}</p>
             </AccordionItem>
           </Accordion>
           <p v-else class="text-gray-500 italic text-center">Aucun rapport disponible</p>

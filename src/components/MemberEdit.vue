@@ -1,19 +1,20 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { X } from '@lucide/vue';
-import BaseButton from '@/components/BaseButton.vue';
-import { useMemberStore } from '@/store/member';
-import { storeToRefs } from 'pinia';
+import { ref, watch } from "vue";
+import { X } from "@lucide/vue";
+import BaseButton from "@/components/BaseButton.vue";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 const store = useMemberStore();
 
-const { selectedMember } = storeToRefs(store);
+const { selectedMember, isLoading } = storeToRefs(store);
 
-const emit = defineEmits(['close', 'save']);
+const emit = defineEmits(["close", "save"]);
 
-const name = ref('');
-const soulHarvesters = ref('');
-const neighborhood = ref('');
+const name = ref("");
+const soulHarvesters = ref("");
+const neighborhood = ref("");
 const salvationStatus = ref(false);
 
 watch(
@@ -38,11 +39,11 @@ const handleSave = async () => {
     salvationStatus: salvationStatus.value,
   };
   await store.updateMember(id, updates);
-  emit('close');
+  emit("close");
 };
 
 const close = () => {
-  emit('close');
+  emit("close");
 };
 </script>
 
@@ -87,7 +88,12 @@ const close = () => {
 
       <div class="flex justify-end gap-4 mt-6">
         <BaseButton variant="tertiary" @click="close">Annuler</BaseButton>
-        <BaseButton variant="primary" @click="handleSave"> Enregistrer </BaseButton>
+        <div class="w-full">
+          <BaseButton variant="primary" :disabled="true" v-if="isLoading">
+            <LoadingSpinner />
+          </BaseButton>
+          <BaseButton v-else variant="primary" @click="handleSave"> Enregistrer </BaseButton>
+        </div>
       </div>
     </div>
   </div>

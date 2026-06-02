@@ -1,15 +1,15 @@
 <script setup>
-import { useMemberStore } from '@/store/member';
-import { storeToRefs } from 'pinia';
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
 
 const store = useMemberStore();
 const { members, headers } = storeToRefs(store);
 
-const emit = defineEmits(['column-click']);
+const emit = defineEmits(["column-click"]);
 
 const selectMemberAndEmit = (i) => {
   store.selectMember(i);
-  emit('column-click');
+  emit("column-click");
 };
 </script>
 
@@ -38,21 +38,18 @@ const selectMemberAndEmit = (i) => {
           @click="selectMemberAndEmit(i)"
         >
           <!-- Nom -->
-          <td class="p-3 font-semibold text-md">
+          <td class="p-3 font-black text-md">
             {{ i.name }}
           </td>
 
-          <!-- Groupe -->
-          <td class="p-3 text-gray-600 hidden md:table-cell">
+          <td class="p-3 text-gray-400 hidden md:table-cell font-light">
             {{ i.neighborhood }}
           </td>
 
-          <!-- Moissonneurs -->
           <td class="p-3">
             {{ i.soulHarvesters }}
           </td>
 
-          <!-- Statut Salut -->
           <td class="p-3 text-center">
             <span
               :class="[
@@ -60,17 +57,15 @@ const selectMemberAndEmit = (i) => {
                 i.salvationStatus ? 'text-green-500 bg-green-400/20' : 'text-red-500 bg-red-400/20',
               ]"
             >
-              {{ i.salvationStatus ? 'Oui' : 'Non' }}
+              {{ i.salvationStatus ? "Oui" : "Non" }}
             </span>
           </td>
 
-          <!-- Dernière note disponible -->
           <td class="p-3 hidden md:table-cell">
             {{
-              // i.details && Object.values(i.details).length
-              //   ? Object.values(i.details).at(0)
-              //   : 'Aucun rapport disponible'
-              i.details.length ? i.details[i.details.length - 1].report : 'Aucun rapport disponible'
+              i.details.details?.length
+                ? i.details.details[i.details.details.length - 1].report
+                : "Aucun rapport disponible"
             }}
           </td>
         </tr>

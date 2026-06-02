@@ -45,7 +45,7 @@ const handleSubmission = () => {
   isReporting.value = false;
 };
 
-const handleMemberEditing = () => {
+const handleMemberEditing = async () => {
   isEditing.value = true;
 };
 

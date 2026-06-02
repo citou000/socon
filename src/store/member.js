@@ -1,20 +1,19 @@
-import { ref, computed } from 'vue';
-import { defineStore } from 'pinia';
-import { supabase } from '@/lib/supabaseClient';
-import { useToast } from 'vue-toastification';
-import { useRoute } from 'vue-router';
-import { storeToRefs } from 'pinia';
-import { useAuth } from '@/store/authStore';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { ref, computed } from "vue";
+import { defineStore } from "pinia";
+import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "vue-toastification";
+import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAuth } from "@/store/authStore";
 
-export const useMemberStore = defineStore('member', () => {
+export const useMemberStore = defineStore("member", () => {
   const route = useRoute();
   const allMembers = ref([]);
   const isLoading = ref(false);
   const error = ref(null);
   const selectedMember = ref(null);
   const limit = ref(25);
-  const details = ref();
+  // const details = ref();
   const isAll = ref(false);
   const inc = 15;
   const logging = ref(false);
@@ -26,20 +25,20 @@ export const useMemberStore = defineStore('member', () => {
   const { user } = storeToRefs(auth);
 
   const monthNames = [
-    'Janvier',
-    'Février',
-    'Mars',
-    'Avril',
-    'Mai',
-    'Juin',
-    'Juillet',
-    'Août',
-    'Septembre',
-    'Octobre',
-    'Novembre',
-    'Décembre',
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre",
   ];
-  const headers = ref(['Nom', 'Quartier', 'Moissonneurs', 'Sauvé', 'Détails']);
+  const headers = ref(["Nom", "Quartier", "Moissonneurs", "Sauvé", "Détails"]);
   const toast = useToast();
 
   const loadMembers = async () => {
@@ -48,59 +47,46 @@ export const useMemberStore = defineStore('member', () => {
     error.value = null;
 
     try {
-      const { data } = await supabase.from('souls').select().eq('team_id', teamId);
-      const soulIds = data.map((s) => s.id);
-      const { data: detailsData, error: detailsError } = await supabase
-        .from('details')
-        .select('details, id')
-        .in('id', soulIds)
-        .order(`id`, { ascending: true });
-      if (detailsError) {
-        throw detailsError;
-      }
+      const { data } = await supabase
+        .from("souls")
+        .select(`
+          *,
+          details:details(*)
+        `)
+        .eq("team_id", teamId);
       allMembers.value = data;
-      details.value = detailsData;
-      allMembers.value = allMembers.value.map((soul) => {
-        return {
-          ...soul,
-          details: details.value.find((d) => d.id === soul.id)?.details || {},
-        };
-      });
-      const detailMap = Object.fromEntries((detailsData || []).map((d) => [d.id, d.details || {}]));
-      allMembers.value = allMembers.value.map((soul) => {
-        return {
-          ...soul,
-          details: detailMap[soul.id] || {},
-        };
-      });
+      console.log("Fetched members:", allMembers.value);
     } catch (err) {
       error.value = err.message;
       isLoading.value = false;
-      console.error('Fetch error:', err);
+      console.error("Fetch error:", err);
     } finally {
       isLoading.value = false;
     }
   };
 
   async function loadTeams() {
-    console.log(user.value.id)
-    const { data, error } = await supabase.from('members').select(`
+    console.log(user.value.id);
+    const { data, error } = await supabase
+      .from("members")
+      .select(`
       role,
       teams(
         id,
         name
       )
-    `).eq('user_id', user.value.id);
+    `)
+      .eq("user_id", user.value.id);
     console.log(data);
     if (error) {
-      toast.error('Impossible de trouver des informations sur les équipes');
+      toast.error("Impossible de trouver des informations sur les équipes");
       isLoading.value = false;
-      throw new Error('Impossible de trouver des informations sur les équipes');
+      throw new Error("Impossible de trouver des informations sur les équipes");
     }
     teams.value = data.map((team) => {
       return team.teams;
-    })
-    console.log(teams.value)
+    });
+    console.log(teams.value);
   }
 
   const stats = computed(() => {
@@ -114,8 +100,8 @@ export const useMemberStore = defineStore('member', () => {
     return { souls, saved, notSaved };
   });
   const keys = ref({
-    souls: 'Âmes',
-    saved: 'Ont fait la prière du salut',
+    souls: "Âmes",
+    saved: "Ont fait la prière du salut",
     notSaved: "N'ont pas fait la prière du salut",
   });
 
@@ -124,18 +110,27 @@ export const useMemberStore = defineStore('member', () => {
   }
 
   const updateMember = async (id, updates) => {
-    const { data, error } = await supabase.from('souls').update(updates).eq('id', id).select();
+    isLoading.value = true;
+    console.log("Updating member with id:", id);
+    console.log("Updates to apply:", updates);
+    const { data, error } = await supabase.from("souls").update(updates).eq("id", id).select();
 
     if (error) throw error;
 
+    console.log("Update result:", data);
+
     const updated = data[0]; // the updated row
 
+    console.log("Updated member:", updated);
+
     const { data: detailData, error: detailError } = await supabase
-      .from('details')
-      .select('details')
-      .eq('id', id)
+      .from("details")
+      .select("details")
+      .eq("id", id)
       .single();
-    if (detailError && detailError.code !== 'PGRST116') throw detailError; // ignore not found
+
+    console.log("Fetched details:", detailData);
+    if (detailError && detailError.code !== "PGRST116") throw detailError; // ignore not found
 
     updated.details = detailData?.details || {};
 
@@ -150,16 +145,18 @@ export const useMemberStore = defineStore('member', () => {
       selectedMember.value = updated;
     }
 
+    isLoading.value = false;
     return updated;
   };
 
   const addMember = (update) => {
-    const { data, error } = supabase.from('souls').insert(update);
+    isLoading.value = true;
+    const { data, error } = supabase.from("souls").insert(update);
     if (error) {
       throw error;
     }
     const { detailData, detailError } = supabase
-      .from('details')
+      .from("details")
       .insert({ id: data[0].id, details: [{}] });
   };
 
@@ -167,11 +164,11 @@ export const useMemberStore = defineStore('member', () => {
     /*
      The id is real because it's used to fetch the currentDetails, and the retrieve was done successfully
      * */
-    const { data, error } = await supabase.from('details').select('details').eq('id', id).single();
-    if (error && error.code !== 'PGRST116') throw error;
+    const { data, error } = await supabase.from("details").select("details").eq("id", id).single();
+    if (error && error.code !== "PGRST116") throw error;
     const currentDetails = data?.details || [];
 
-    const today = new Date().toLocaleDateString('fr-FR');
+    const today = new Date().toLocaleDateString("fr-FR");
     const update = {
       date: today,
       report: updates,
@@ -184,7 +181,7 @@ export const useMemberStore = defineStore('member', () => {
     */
 
     const { error: updateError } = await supabase
-      .from('details')
+      .from("details")
       .upsert({ id: id, details: currentDetails })
       .select();
 
@@ -193,7 +190,7 @@ export const useMemberStore = defineStore('member', () => {
     // And the id we put in the upserted object is the id sent, and used in the retrieving of the
     // details so it can't be false
     if (updateError) {
-      toast.error('Mise à jour échoué!');
+      toast.error("Mise à jour échoué!");
       throw updateError;
     }
 
@@ -205,6 +202,7 @@ export const useMemberStore = defineStore('member', () => {
         details: currentDetails,
       };
     }
+    isLoading.value = false;
   };
 
   const members = computed(() => {
@@ -219,7 +217,6 @@ export const useMemberStore = defineStore('member', () => {
     }
     limit.value += Math.min(inc, remaining);
   };
-
 
   return {
     members,
