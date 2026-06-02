@@ -64,7 +64,6 @@ const editMember = () => {
           </span>
         </p>
 
-        <!-- Summary Section -->
         <p class="font-bold flex justify-between">
           <span class="font-semibold text-gray-600">Détails</span>
         </p>
