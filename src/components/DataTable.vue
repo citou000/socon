@@ -11,6 +11,8 @@ const selectMemberAndEmit = (i) => {
   store.selectMember(i);
   emit("column-click");
 };
+
+// TODO: Add trimming for the soul harvester's name and neighborhood to prevent overflow in the table cells.
 </script>
 
 <template>

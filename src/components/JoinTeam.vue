@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from "vue";
+import router from "@/router";
 import BaseButton from "@/components/BaseButton.vue";
 import { X } from "@lucide/vue";
+import { supabase } from "@/lib/supabaseClient";
 
 const code = ref(null);
 const teamCode = ref("");
@@ -12,6 +14,14 @@ const setFocus = async () => {
 };
 
 defineExpose({ setFocus });
+
+const joinTeam = async () => {
+  const { data, error } = await supabase.from("codeacess").eq("acces_code", teamCode).select();
+  if (error) {
+    throw new Error();
+  }
+  return router.push("teamJoin");
+};
 </script>
 <template>
   <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-center items-center z-40">
@@ -44,7 +54,9 @@ defineExpose({ setFocus });
           />
         </div>
 
-        <BaseButton type="submit" variant="primary">Rejoindre l'équipe</BaseButton>
+        <BaseButton type="submit" variant="primary" @click="joinTeam"
+          >Rejoindre l'équipe</BaseButton
+        >
       </form>
     </div>
   </div>
