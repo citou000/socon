@@ -29,26 +29,26 @@ const editMember = () => {
 <template>
   <div class="fixed inset-0 bg-gray-700/50 backdrop-blur-sm flex justify-end">
     <div
-      class="bg-white w-full md:w-1/3 h-screen px-6 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col overflow-scroll gap-6"
+      class="bg-white w-full md:w-1/3 h-screen px-4 shadow-lg transform transition-transform duration-300 ease-in-out translate-x-0 flex flex-col overflow-scroll gap-6"
     >
-      <div class="flex justify-between items-center sticky top-0 bg-white z-10 pt-8">
+      <div class="flex justify-between items-center sticky top-0 bg-white z-10 pt-4">
         <button @click="close" class="text-gray-500 hover:text-red-600 text-2xl cursor-pointer">
           <X />
         </button>
       </div>
 
       <div v-if="member" class="space-y-4 flex flex-col">
-        <h2 class="font-black text-6xl text-purple-800 flex justify-between">
+        <h2 class="font-semibold text-5xl text-purple-800 flex justify-between">
           {{ member.name }}
         </h2>
-        <p class="font-bold flex justify-between">
-          <span class="font-semibold text-gray-600">Quartier:</span> {{ member.neighborhood }}
+        <p class="font-semibold flex justify-between">
+          <span class="text-gray-600">Quartier:</span> {{ member.neighborhood }}
         </p>
-        <p class="font-bold flex justify-between">
-          <span class="font-semibold text-gray-600">Contact:</span>
+        <p class="font-semibold flex justify-between">
+          <span class="text-gray-600">Contact:</span>
           <a :href="`tel: ${member.contact}`">{{ member.contact }}</a>
         </p>
-        <p class="font-bold flex justify-between items-center">
+        <p class="font-semibold flex justify-between items-center">
           <span class="font-semibold text-gray-600">Prière du salut:</span>
           <span
             :class="[
@@ -75,7 +75,7 @@ const editMember = () => {
               :key="index"
               :title="`Semaine ${index + 1}`"
             >
-              <p class="text-gray-700 whitespace-pre-line font-light">{{ detail.report }}</p>
+              <p class="text-gray-700 whitespace-pre-line font-normal">{{ detail.report }}</p>
             </AccordionItem>
           </Accordion>
           <p v-else class="text-gray-500 italic text-center">Aucun rapport disponible</p>
@@ -92,7 +92,7 @@ const editMember = () => {
 
       <div class="flex justify-end h-full items-end">
         <button
-          class="px-4 py-2 bg-purple-900 rounded-sm font-bold text-white cursor-pointer hover:bg-purple-700 transition-all"
+          class="px-4 py-2 bg-purple-900 rounded-sm font-bold text-white cursor-pointer hover:bg-purple-700 transition-all mb-2"
           @click="editMember"
         >
           Modifier

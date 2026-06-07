@@ -17,6 +17,8 @@ export const useMemberStore = defineStore("member", () => {
   const isAll = ref(false);
   const inc = 15;
   const logging = ref(false);
+  const token = ref(null);
+  const linkGenerated = ref(false);
   const hasMember = computed(() => {
     return allMembers.value.length > 0;
   });
@@ -56,6 +58,17 @@ export const useMemberStore = defineStore("member", () => {
         .eq("team_id", teamId);
       allMembers.value = data;
       console.log("Fetched members:", allMembers.value);
+      const { data: tokenData, error: tokenError } = await supabase
+        .from("invites")
+        .select("token")
+        .eq("team_id", teamId);
+      if (tokenError) {
+        token.value = null;
+        console.error("Not a single row found:", tokenError);
+      } else {
+        token.value = tokenData.length > 0 ? tokenData[0].token : null;
+        linkGenerated.value = !!token.value;
+      }
     } catch (err) {
       error.value = err.message;
       isLoading.value = false;
@@ -114,6 +127,9 @@ export const useMemberStore = defineStore("member", () => {
     console.log("Updating member with id:", id);
     console.log("Updates to apply:", updates);
     const { data, error } = await supabase.from("souls").update(updates).eq("id", id).select();
+
+    console.log("ERROR:", error);
+    console.log("DATA:", data);
 
     if (error) throw error;
 
@@ -239,5 +255,7 @@ export const useMemberStore = defineStore("member", () => {
     addMember,
     loadTeams,
     teams,
+    linkGenerated,
+    token,
   };
 });

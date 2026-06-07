@@ -1,18 +1,26 @@
 <script setup>
-import logo from '@/assets/logo.svg';
-import { ref } from 'vue';
-import { useToast } from 'vue-toastification';
-import { supabase } from '@/lib/supabaseClient';
-import BaseButton from '@/components/BaseButton.vue';
-import { Plus } from '@lucide/vue';
-import { useRouter } from 'vue-router';
+import logo from "@/assets/logo.svg";
+import { ref } from "vue";
+import { useToast } from "vue-toastification";
+import { supabase } from "@/lib/supabaseClient";
+import BaseButton from "@/components/BaseButton.vue";
+import { Plus } from "@lucide/vue";
+import { useRouter, useRoute } from "vue-router";
+import { Copy, CheckCheck } from "@lucide/vue";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import { useAuth } from "@/store/authStore";
+
+const route = useRoute();
+const authStore = useAuth();
+const { user } = storeToRefs(authStore);
+const { linkGenerated, token } = storeToRefs(useMemberStore());
 
 const toast = useToast();
 const profileMenu = ref(false);
 const router = useRouter();
 const inviteSharing = ref(false);
-const linkGenerated = ref(false);
-const inviteLink = ref('');
+const isCopying = ref(false);
 
 const props = defineProps({
   team: {
@@ -21,17 +29,17 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['loading', 'addSouls']);
+const emit = defineEmits(["loading", "addSouls"]);
 
 const loggingOut = async () => {
   profileMenu.value = false;
   const { error } = await supabase.auth.signOut();
   if (error) {
-    toast.error('Erreur de déconnexion');
+    toast.error("Erreur de déconnexion");
     return;
   }
-  toast.success('Déconnecter avec succès');
-  router.push('/login');
+  toast.success("Déconnecter avec succès");
+  router.push("/login");
 };
 
 const openCopyInvite = () => {
@@ -48,18 +56,40 @@ const manageModal = () => {
   }
 };
 
-const linkGeneration = () => {
-  const inviteCode =
-    Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  const inviteLink = `${window.location.origin}/invite/${inviteCode}`;
-  const { data, error } = supabase
-    .from('invites')
-    .insert([{ code: inviteCode, created_at: new Date() }]);
+const linkGeneration = async () => {
+  const inviteCode = crypto.randomUUID().slice(0, 8).toUpperCase();
+  const { data, error } = await supabase.from("invites").insert({
+    token: inviteCode,
+    team_id: route.params.id,
+    created_by: user.value.id,
+    role: "admin",
+  });
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
   if (error) {
     toast.error("Erreur lors de la génération du lien d'invitation");
-    return '';
+    return "";
   }
-  return inviteLink;
+
+  return inviteCode;
+};
+
+const handleGenerateInvite = async () => {
+  inviteLink.value = await linkGeneration();
+
+  if (inviteLink.value) {
+    linkGenerated.value = true;
+  }
+};
+
+const copyCode = () => {
+  navigator.clipboard.writeText(inviteLink.value);
+  isCopying.value = true;
+  toast.success("Code d'invitation copié !");
+  setTimeout(() => {
+    isCopying.value = false;
+  }, 2000);
 };
 </script>
 <template>
@@ -95,12 +125,13 @@ const linkGeneration = () => {
     <div class="absolute bg-white right-3 top-18 p-2 rounded-xl z-100" v-if="profileMenu">
       <ul class="flex flex-col gap-2 w-fit">
         <li
+          v-if="!props.team"
           class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
           @click="openCopyInvite"
         >
           Inviter des membres
         </li>
-        <hr class="border text-gray-300" />
+        <hr v-if="!props.team" class="border text-gray-300" />
         <li
           class="py-1 px-2 hover:bg-purple-200/40 cursor-pointer rounded-md transition-all font-medium hover:text-purple-500"
           @click="loggingOut"
@@ -114,25 +145,34 @@ const linkGeneration = () => {
       v-show="inviteSharing"
     >
       <div v-if="!linkGenerated" class="flex flex-col gap-4">
-        <span class="font-semibold text-lg">Générer un lien d'invitation</span>
-        <BaseButton
-          variant="primary"
-          @click="
-            inviteLink = linkGeneration();
-            linkGenerated = true;
-          "
-        >
-          Générer
-        </BaseButton>
+        <span class="font-semibold text-lg">Générer un code d'accès</span>
+        <BaseButton variant="primary" @click="handleGenerateInvite"> Générer </BaseButton>
       </div>
-      <div v-if="linkGenerated" class="flex flex-col gap-4">
-        <span class="font-semibold text-lg">Partager le lien d'invitation</span>
-        <input
-          type="text"
-          readonly
-          class="border border-gray-300 rounded-md p-2 w-full cursor-default"
-          v-model="inviteLink"
-        />
+      <div v-else class="flex flex-col gap-4">
+        <span class="font-semibold text-lg">Code d'accès</span>
+        <div class="flex items-center gap-2 border border-gray-300 rounded-md p-1">
+          <input
+            type="text"
+            readonly
+            class="w-full cursor-default text-sm outline-0"
+            v-model="token"
+          />
+          <div>
+            <Copy
+              v-if="!isCopying"
+              class="cursor-pointer hover:bg-purple-200/50 p-1 size-9 border border-gray-300 rounded-md text-gray-600"
+              @click="copyCode"
+            />
+            <CheckCheck
+              v-else
+              class="text-green-500 p-1 size-9 border border-gray-300 rounded-md"
+              @click="
+                navigator.clipboard.writeText(inviteLink);
+                toast.success('Code d\'invitation copié !');
+              "
+            />
+          </div>
+        </div>
         <BaseButton variant="primary" @click="alert('Copy link')"> Copier le lien </BaseButton>
       </div>
     </div>

@@ -16,6 +16,7 @@
     "*.{js,jsx,ts,tsx,mjs,cjs,vue}": "pnpm run lint"
   },
   "dependencies": {
+    "@fontsource-variable/roboto": "^5.2.10",
     "@fontsource/inter": "^5.2.8",
     "@lucide/vue": "^1.16.0",
     "@supabase/supabase-js": "^2.95.3",

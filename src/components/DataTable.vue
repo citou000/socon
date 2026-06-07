@@ -40,7 +40,7 @@ const selectMemberAndEmit = (i) => {
           @click="selectMemberAndEmit(i)"
         >
           <!-- Nom -->
-          <td class="p-3 font-black text-md">
+          <td class="p-3 font-semibold text-md">
             {{ i.name }}
           </td>
 

@@ -15,12 +15,8 @@ const setFocus = async () => {
 
 defineExpose({ setFocus });
 
-const joinTeam = async () => {
-  const { data, error } = await supabase.from("codeacess").eq("acces_code", teamCode).select();
-  if (error) {
-    throw new Error();
-  }
-  return router.push("teamJoin");
+const joinTeam = async (code) => {
+  console.log(code);
 };
 </script>
 <template>
@@ -49,12 +45,12 @@ const joinTeam = async () => {
             required
             class="border border-purple-200 px-1 py-2 rounded-md outline-0 focus:ring-purple-100 focus:ring-1 focus:border-purple-300 transition-colors duration-100"
             v-model="teamCode"
-            placeholder="cdsf-uiln"
+            placeholder="cdsf56lf"
             ref="code"
           />
         </div>
 
-        <BaseButton type="submit" variant="primary" @click="joinTeam"
+        <BaseButton type="submit" variant="primary" @click="joinTeam(teamCode)"
           >Rejoindre l'équipe</BaseButton
         >
       </form>
